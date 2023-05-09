@@ -7,6 +7,7 @@
 # 00000 Nome2
 
 import sys
+import numpy as np
 from search import (
     Problem,
     Node,
@@ -30,10 +31,26 @@ class BimaruState:
         return self.id < other.id
 
     # TODO: outros metodos da classe
-
+    def fill_row(self, row: int):
+        pass
+    def fill_col(self, col: int):
+        pass
+    def add_boat_4(self, pos_init: list, direction: str):
+        pass
+    def add_boat_3(self, pos_init: list, direction: str):
+        pass
+    def add_boat_2(self, pos_init: list, direction: str):
+        pass
+    def add_boat_1(self, pos_init: list):
+        pass
 
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
+
+    def __init__(self):
+        self.representation = np.arange(100,dtype=np.str).reshape(10,10)
+        self.representation[0:] = "."
+
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -64,7 +81,15 @@ class Board:
             > line = stdin.readline().split()
         """
         # TODO
+        from sys import stdin
+        x = np.arrange
+        lines = stdin.readline().split()
+        cols = stdin.readline().split()
+        n_hints = int(stdin.readline.split())
+        for i in n_hints:
+            break
         pass
+        print(self.representation)
 
     # TODO: outros metodos da classe
 
@@ -79,6 +104,7 @@ class Bimaru(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
         # TODO
+        
         pass
 
     def result(self, state: BimaruState, action):
