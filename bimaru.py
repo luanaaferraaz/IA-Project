@@ -48,8 +48,8 @@ class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
     def __init__(self):
-        self.representation = np.arange(100,dtype=np.str).reshape(10,10)
-        self.representation[0:] = "."
+        self.representation = np.chararray((10,10), unicode=True)
+        self.representation[:] = "."
 
 
     def get_value(self, row: int, col: int) -> str:
@@ -70,7 +70,7 @@ class Board:
         pass
 
     @staticmethod
-    def parse_instance():
+    def parse_instance(self):
         """Lê o test do standard input (stdin) que é passado como argumento
         e retorna uma instância da classe Board.
 
@@ -136,4 +136,8 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
+    board = Board()
+    board.representation[2] = "l"
+    print(board.representation)
+
     pass
