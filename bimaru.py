@@ -49,25 +49,33 @@ class Board:
 
     def __init__(self):
         self.representation = np.chararray((10,10), unicode=True)
-        self.representation[:] = "."
+        self.representation[:] = ""
 
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
         # TODO
-        pass
+        return self.representation[(row, col)]
 
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
         # TODO
-        pass
+        if (row == 0):
+            return ("_", self.representation[(row+1,col)])
+        elif (row >= 9):
+            return (self.representation[(row-1,col)], "_")
+        return(self.representation[(row-1, col)], self.representation[(row+1,col)])
 
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
         # TODO
-        pass
+        if (col == 0):
+            return ("_", self.representation[(row,col+1)])
+        elif (col >= 9):
+            return (self.representation[(row,col-1)], "_")
+        return(self.representation[(row, col-1)], self.representation[(row,col+1)])
 
     @staticmethod
     def parse_instance(self):
@@ -138,5 +146,8 @@ if __name__ == "__main__":
     board = Board()
     board.parse_instance(board)
     print(board.representation)
+    print("\n")
+    print(board.adjacent_vertical_values(10, 5))
+    print("\n")
 
     pass
