@@ -82,14 +82,13 @@ class Board:
         """
         # TODO
         from sys import stdin
-        x = np.arrange
         lines = stdin.readline().split()
         cols = stdin.readline().split()
-        n_hints = int(stdin.readline.split())
-        for i in n_hints:
-            break
+        n_hints = int(stdin.readline())
+        for _ in range(n_hints):
+            lista = stdin.readline().split()
+            self.representation[(int(lista[1]), int(lista[2]))] = lista[3]
         pass
-        print(self.representation)
 
     # TODO: outros metodos da classe
 
@@ -137,7 +136,7 @@ if __name__ == "__main__":
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
     board = Board()
-    board.representation[2] = "l"
+    board.parse_instance(board)
     print(board.representation)
 
     pass
