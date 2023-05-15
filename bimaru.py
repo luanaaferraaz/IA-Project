@@ -42,6 +42,7 @@ class BimaruState:
             if(self.board.representation[(i, col)] == "_"):
                 self.board.representation[(i, col)] = "w"
         pass
+    
     def fill_top(self, row, col):
         if(col==0):
             self.board.representation[row, col+1] = "w"
@@ -80,14 +81,12 @@ class BimaruState:
                 self.board.representation[row+2, col+1] = "w"
                 self.board.representation[row+1, col-1] = "w"
                 self.board.representation[row+2, col-1] = "w"
-        pass
-
-        
+        pass      
         
     def fill_bottom(self, row, col):
         if(col==0):
             self.board.representation[row, col+1] = "w"
-            if(row!=0):
+            if(row!=9):
                 self.board.representation[row+1, col+1] = "w"
                 self.board.representation[row+1, col] = "w"
             if(row==1):
@@ -98,7 +97,7 @@ class BimaruState:
                 self.board.representation[row-2, col+1] = "w"
         elif(col==9):
             self.board.representation[row, col-1] = "w"
-            if(row!=0):
+            if(row!=9):
                 self.board.representation[row+1, col-1] = "w"
                 self.board.representation[row+1, col] = "w"
             if(row==1):
@@ -110,9 +109,10 @@ class BimaruState:
         else:
             self.board.representation[row, col-1] = "w"
             self.board.representation[row, col+1] = "w"
-            self.board.representation[row+1, col+1] = "w"
-            self.board.representation[row+1, col] = "w"
-            self.board.representation[row+1, col-1] = "w"
+            if(row!=9):
+                self.board.representation[row+1, col+1] = "w"
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col-1] = "w"
             if(row==1):
                 self.board.representation[row-1, col+1] = "w"
                 self.board.representation[row-1, col] = "t"
@@ -125,9 +125,77 @@ class BimaruState:
         pass
 
     def fill_right(self, row, col):
+        if col == 9:
+            if row != 9:
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col-1] = "w"
+                self.board.representation[row+1, col-2] = "w"
+            if row != 0:
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col-1] = "w"
+                self.board.representation[row-1, col-2] = "w"
+        elif col == 1:
+            if row != 0:
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col+1] = "w"
+                self.board.representation[row-1, col-1] = "w"
+            if row != 9:
+                self.board.representation[row+1, col-1] = "w"
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col+1] = "w"
+            self.board.representation[row, col+1] = "w"
+            self.board.representation[row, col-1] = "l"
+        else:
+            if row != 0:
+                self.board.representation[row-1, col-1] = "w"
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col-2] = "w"
+                self.board.representation[row-1, col+1] = "w"
+            if row != 9:
+                self.board.representation[row+1, col-1] = "w"
+                self.board.representation[row+1, col-2] = "w"
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col+1] = "w"
+            self.board.representation[row, col+1] = "w"
+        
+                
         pass
+    
     def fill_left(self, row, col):
+        if (col == 0):
+            if (row!=0):
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col+1] = "w"
+                self.board.representation[row-1, col+2] = "w"
+            if (row!=9):
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col+1] = "w"
+                self.board.representation[row+1, col+2] = "w"                
+        elif (col == 8):
+            if (row != 9):
+                self.board.representation[row+1, col-1] = "w"
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col+1] = "w"
+            if (row != 0):
+                self.board.representation[row-1, col-1] = "w"
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col+1] = "w"
+            self.board.representation[row, col-1] = "w"
+            self.board.representation[row, col+1] = "r"
+        else:
+            if (row != 9):
+                self.board.representation[row+1, col-1] = "w"
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col+1] = "w"
+                self.board.representation[row+1, col+2] = "w"
+            if ( row != 0):
+                self.board.representation[row-1, col-1] = "w"
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col+1] = "w"
+                self.board.representation[row-1, col+2] = "w"
+            self.board.representation[row, col-1] = "w"
         pass
+    
     def fill_around(self, row, col):
         if(col==0):
             if(row==0):
@@ -170,7 +238,6 @@ class BimaruState:
                 self.board.representation[row-1, col] = "w"
                 self.board.representation[row-1, col-1] = "w"
                 self.board.representation[row-1, col+1] = "w"
-
 
 
     def add_boat_4(self, pos_init: list, direction: str):
@@ -280,7 +347,8 @@ class Board:
 class Bimaru(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        self.initial = board
+        #self.initial = board
+        self.initial = BimaruState(board)
         # TODO
         pass
 
@@ -299,14 +367,20 @@ class Bimaru(Problem):
         for hint in state.board.hints:
             if hint[3] == "T":
                 lista.append(["fill top", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "B":
                 lista.append(["fill bottom", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "R":
                 lista.append(["fill right", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "L":
                 lista.append(["fill left", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "C":
                 lista.append(["fill around", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
+        print(lista)
         return lista
 
     def result(self, state: BimaruState, action):
@@ -315,17 +389,21 @@ class Bimaru(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
         # TODO
-        for i in range(len(action)):
-            if (action[i][0] == "fill lines"):
-                state.fill_row(action[i][1])
-            elif (action[i][0] == "fill cols"):
-                state.fill_col(action[i][1])
-            elif (action[i][0] == "fill top"):
-                state.fill_top(action[i][1], action[i][2])
-            elif (action[i][0] == "fill bottom"):
-                state.fill_bottom(action[i][1], action[i][2])
-            elif (action[i][0]=="fill around"):
-                state.fill_around(action[i][1], action[i][2])
+        if (action[0] == "fill lines"):
+            state.fill_row(action[1])
+        elif (action[0] == "fill cols"):
+            state.fill_col(action[1])
+        elif (action[0] == "fill top"):
+            state.fill_top(action[1], action[2])
+        elif (action[0] == "fill bottom"):
+            state.fill_bottom(action[1], action[2])
+        elif (action[0]=="fill around"):
+            state.fill_around(action[1], action[2])
+        elif (action[0]=="fill left"):
+            state.fill_left(action[1], action[2])
+        elif (action[0]=="fill right"):
+            state.fill_right(action[1], action[2])
+        return state
         pass
 
     def goal_test(self, state: BimaruState):
@@ -333,6 +411,8 @@ class Bimaru(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
         # TODO
+        if (state.board.representation[9,0] == "w"):
+            return True
         pass
 
     def h(self, node: Node):
@@ -361,17 +441,19 @@ if __name__ == "__main__":
 
     board = Board()
     board.parse_instance(board)
-    # Imprimir valores adjacentes
 
-    # Criar uma instância de Bimaru:
     problem = Bimaru(board)
-    # Criar um estado com a configuração inicial:
-    initial_state = BimaruState(board)
-    # Mostrar valor na posição (3, 3):
-    print(board.representation)
-    action = problem.actions(initial_state)
-    # Realizar acção de inserir o valor w (água) na posição da linha 3 e coluna 3
-    result_state = problem.result(initial_state, action)
+    
+    #initial_state = BimaruState(board)
+    
+    #print(board.representation)
+    
+    #action = problem.actions(initial_state)
+    #result_state = problem.result(initial_state, action)
+
+    goal_node = depth_first_tree_search(problem)
+    print("Solution:\n", goal_node.state.board.representation, sep="")
+
     # Mostrar valor na posição (3, 3):
     print("\n")
     print(board.representation)
