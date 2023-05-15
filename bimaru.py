@@ -367,19 +367,14 @@ class Bimaru(Problem):
         for hint in state.board.hints:
             if hint[3] == "T":
                 lista.append(["fill top", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
             elif hint[3] == "B":
                 lista.append(["fill bottom", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
             elif hint[3] == "R":
                 lista.append(["fill right", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
             elif hint[3] == "L":
                 lista.append(["fill left", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
             elif hint[3] == "C":
                 lista.append(["fill around", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
         print(lista)
         return lista
 
