@@ -2,9 +2,9 @@
 # Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
 
-# Grupo 00:
-# 00000 Nome1
-# 00000 Nome2
+# Grupo 44:
+# 102908 Luana Ferraz
+# 103555 Ricardo Pereira
 
 import sys
 import numpy as np
@@ -240,26 +240,29 @@ class BimaruState:
                 self.board.representation[row-1, col+1] = "w"
 
 
-    def add_boat_4(self, pos_init: list, direction: str):
+    def add_boat_4(self, pos_init: list, pos_end: list):
         pass
-    def add_boat_3(self, pos_init: list, direction: str):
+    def add_boat_3(self, pos_init: list, pos_end: list):
         pass
-    def add_boat_2(self, pos_init: list, direction: str):
+    def add_boat_2(self, pos_init: list, pos_end: list):
+            
+        self.board.representation[pos_init[0], pos_end[0]] = "c"
         pass
     def add_boat_1(self, pos_init: list):
+        self.board.representation[pos_init[0], pos_init[1]] = "c"
+        self.fill_around(pos_init[0], pos_init[1])
         pass
 
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    def __init__(self):
-        self.representation = np.chararray((10,10), unicode=True)
-        self.representation[:] = "_"
-        self.lines = []
-        self.cols = []
-        self.lines_capacity = []
-        self.cols_capacity = []       
-        self.hints = []
+    def __init__(self, lines, cols, lines_capacity, cols_capacity, hints, representation):
+        self.representation = representation
+        self.lines = lines
+        self.cols = cols
+        self.lines_capacity = lines_capacity
+        self.cols_capacity = cols_capacity     
+        self.hints = hints
 
 
 
@@ -313,7 +316,7 @@ class Board:
         return(self.representation[(row+1, col-1)], self.representation[(row-1,col+1)])
 
     @staticmethod
-    def parse_instance(self):
+    def parse_instance():
         """Lê o test do standard input (stdin) que é passado como argumento
         e retorna uma instância da classe Board.
 
@@ -325,19 +328,24 @@ class Board:
         """
         # TODO
         from sys import stdin
-        self.lines = [int(x) for x in stdin.readline().split()[1:]]
-        self.cols = [int(x) for x in stdin.readline().split()[1:]]
-        self.lines_capacity = self.lines.copy()
-        self.cols_capacity = self.cols.copy()
+        lines = [int(x) for x in stdin.readline().split()[1:]]
+        cols = [int(x) for x in stdin.readline().split()[1:]]
+        lines_capacity = lines.copy()
+        cols_capacity = cols.copy()
+        hints = []
         n_hints = int(stdin.readline())
+        representation = np.chararray((10,10), unicode=True)
+        representation[:] = "_"
         for _ in range(n_hints):
             lista = stdin.readline().split()
-            self.hints.append(lista)
-            self.representation[(int(lista[1]), int(lista[2]))] = lista[3]
+            hints.append(lista)
+            representation[(int(lista[1]), int(lista[2]))] = lista[3]
             if(lista[3] != "W"):
-                self.lines_capacity[int(lista[1])]-=1
-                self.cols_capacity[int(lista[2])]-=1
-        pass
+                lines_capacity[int(lista[1])]-=1
+                cols_capacity[int(lista[2])]-=1
+        
+        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation)
+        return new_board
 
 
 
@@ -367,14 +375,19 @@ class Bimaru(Problem):
         for hint in state.board.hints:
             if hint[3] == "T":
                 lista.append(["fill top", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "B":
                 lista.append(["fill bottom", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "R":
                 lista.append(["fill right", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "L":
                 lista.append(["fill left", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
             elif hint[3] == "C":
                 lista.append(["fill around", int(hint[1]), int(hint[2])])
+                state.board.hints.remove(hint)
         print(lista)
         return lista
 
@@ -434,8 +447,7 @@ if __name__ == "__main__":
     print(board.adjacent_vertical_values(10, 5))
     print("\n")"""
 
-    board = Board()
-    board.parse_instance(board)
+    board = Board.parse_instance()
 
     problem = Bimaru(board)
     
