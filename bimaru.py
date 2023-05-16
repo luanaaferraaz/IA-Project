@@ -43,6 +43,8 @@ class BimaruState:
                 self.board.representation[(i, col)] = "w"
         pass
     
+    # !!! qnd fazemos tipo adicionar um b temos que no lines_capacity e cols_capacity atualizar
+    # ja esta feito mas se encontrares algum sitio que falte mete pls
     def fill_top(self, row, col):
         if(col==0):
             self.board.representation[row, col+1] = "w"
@@ -52,6 +54,7 @@ class BimaruState:
             if(row==8):
                 self.board.representation[row+1, col+1] = "w"
                 self.board.representation[row+1, col] = "b"
+                self.board.update_capacities(row+1, col)
             else:
                 self.board.representation[row+1, col+1] = "w"
                 self.board.representation[row+2, col+1] = "w"
@@ -63,6 +66,7 @@ class BimaruState:
             if(row==8):
                 self.board.representation[row+1, col-1] = "w"
                 self.board.representation[row+1, col] = "b"
+                self.board.update_capacities(row+1, col)
             else:
                 self.board.representation[row+1, col-1] = "w"
                 self.board.representation[row+2, col-1] = "w"
@@ -75,6 +79,7 @@ class BimaruState:
             if(row==8):
                 self.board.representation[row+1, col+1] = "w"
                 self.board.representation[row+1, col] = "b"
+                self.board.update_capacities(row+1, col)
                 self.board.representation[row+1, col-1] = "w"
             else:
                 self.board.representation[row+1, col+1] = "w"
@@ -92,6 +97,7 @@ class BimaruState:
             if(row==1):
                 self.board.representation[row-1, col+1] = "w"
                 self.board.representation[row-1, col] = "t"
+                self.board.update_capacities(row-1, col)
             else:
                 self.board.representation[row-1, col+1] = "w"
                 self.board.representation[row-2, col+1] = "w"
@@ -103,6 +109,7 @@ class BimaruState:
             if(row==1):
                 self.board.representation[row-1, col-1] = "w"
                 self.board.representation[row-1, col] = "t"
+                self.board.update_capacities(row-1, col)
             else:
                 self.board.representation[row-1, col-1] = "w"
                 self.board.representation[row-2, col-1] = "w"
@@ -116,6 +123,7 @@ class BimaruState:
             if(row==1):
                 self.board.representation[row-1, col+1] = "w"
                 self.board.representation[row-1, col] = "t"
+                self.board.update_capacities(row-1, col)
                 self.board.representation[row-1, col-1] = "w"
             else:
                 self.board.representation[row-1, col+1] = "w"
@@ -145,6 +153,8 @@ class BimaruState:
                 self.board.representation[row+1, col+1] = "w"
             self.board.representation[row, col+1] = "w"
             self.board.representation[row, col-1] = "l"
+            self.board.update_capacities(row, col-1)
+
         else:
             if row != 0:
                 self.board.representation[row-1, col-1] = "w"
@@ -182,6 +192,8 @@ class BimaruState:
                 self.board.representation[row-1, col+1] = "w"
             self.board.representation[row, col-1] = "w"
             self.board.representation[row, col+1] = "r"
+            self.board.update_capacities(row, col+1)
+
         else:
             if (row != 9):
                 self.board.representation[row+1, col-1] = "w"
@@ -264,7 +276,9 @@ class Board:
         self.cols_capacity = cols_capacity     
         self.hints = hints
 
-
+    def update_capacities(self, row: int, col: int):
+        self.lines_capacity[row]-= 1
+        self.cols_capacity[col]-= 1
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
@@ -369,26 +383,28 @@ class Bimaru(Problem):
         for i in range(len(state.board.lines_capacity)):
             if (state.board.lines_capacity[i] == 0):
                lista.append(["fill lines", i])
+               state.board.lines_capacity[i] = -1
         for i in range(len(state.board.cols_capacity)):
             if (state.board.cols_capacity[i] == 0):
                lista.append(["fill cols", i])
-        for hint in state.board.hints:
-            if hint[3] == "T":
-                lista.append(["fill top", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
-            elif hint[3] == "B":
-                lista.append(["fill bottom", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
-            elif hint[3] == "R":
-                lista.append(["fill right", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
-            elif hint[3] == "L":
-                lista.append(["fill left", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
-            elif hint[3] == "C":
-                lista.append(["fill around", int(hint[1]), int(hint[2])])
-                state.board.hints.remove(hint)
-        print(lista)
+               state.board.cols_capacity[i] = -1
+        for i in range(len(state.board.hints)-1, -1, -1):
+            if state.board.hints[i][3] == "T":
+                lista.append(["fill top", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
+                state.board.hints.pop(i)
+            elif state.board.hints[i][3] == "B":
+                lista.append(["fill bottom", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
+                state.board.hints.pop(i)
+            elif state.board.hints[i][3] == "R":
+                lista.append(["fill right", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
+                state.board.hints.pop(i)
+            elif state.board.hints[i][3] == "L":
+                lista.append(["fill left", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
+                state.board.hints.pop(i)
+            elif state.board.hints[i][3] == "C":
+                lista.append(["fill around", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
+                state.board.hints.pop(i)
+        print(state.board.lines_capacity)
         return lista
 
     def result(self, state: BimaruState, action):
@@ -412,14 +428,13 @@ class Bimaru(Problem):
         elif (action[0]=="fill right"):
             state.fill_right(action[1], action[2])
         return state
-        pass
 
     def goal_test(self, state: BimaruState):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
         # TODO
-        if (state.board.representation[9,0] == "w"):
+        if (state.board.representation[9,6] == "w"):
             return True
         pass
 
@@ -462,8 +477,6 @@ if __name__ == "__main__":
     print("Solution:\n", goal_node.state.board.representation, sep="")
 
     # Mostrar valor na posição (3, 3):
-    print("\n")
-    print(board.representation)
 
 
     
