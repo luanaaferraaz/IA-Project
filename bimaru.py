@@ -251,6 +251,69 @@ class BimaruState:
                 self.board.representation[row-1, col-1] = "w"
                 self.board.representation[row-1, col+1] = "w"
 
+    def fill_middle(self, row, col):
+        if col == 0:
+            if row != 1:
+                self.board.representation[row-2, col+1] = "w"
+            if row != 8:
+                self.board.representation[row+2, col+1] = "w"
+            self.board.representation[row-1, col+1] = "w"
+            self.board.representation[row, col+1] = "w"
+            self.board.representation[row+1, col+1] = "w"
+        elif col == 9:
+            if row != 1:
+                self.board.representation[row-2, col-1] = "w"
+            if row != 8:
+                self.board.representation[row+2, col-1] = "w"
+            self.board.representation[row-1, col-1] = "w"
+            self.board.representation[row, col-1] = "w"
+            self.board.representation[row+1, col-1] = "w"
+        else:
+            if row == 0:
+                if col != 1:
+                    self.board.representation[row+1, col-2] = "w"
+                if col != 8:
+                    self.board.representation[row+1, col+2] = "w"
+                self.board.representation[row+1, col+1] = "w"
+                self.board.representation[row+1, col] = "w"
+                self.board.representation[row+1, col-1] = "w"  
+            elif row == 9:
+                if col != 1:
+                    self.board.representation[row-1, col-2] = "w"
+                if col != 8:
+                    self.board.representation[row-1, col+2] = "w"
+                self.board.representation[row-1, col+1] = "w"
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col-1] = "w"  
+            else:
+                if "w" in self.board.adjacent_vertical_values(row, col) \
+                    or "W" in self.board.adjacent_vertical_values(row, col):
+                    if col != 1:
+                        self.board.representation[row+1, col+2] = "w"
+                        self.board.representation[row-1, col+2] = "w"
+                    if col != 8:
+                        self.board.representation[row+1, col-2] = "w"
+                        self.board.representation[row-1, col-2] = "w"
+                    self.board.representation[row+1, col+1] = "w"
+                    self.board.representation[row+1, col] = "w"
+                    self.board.representation[row+1, col-1] = "w" 
+                    self.board.representation[row-1, col+1] = "w"
+                    self.board.representation[row-1, col] = "w"
+                    self.board.representation[row-1, col-1] = "w"
+                elif "w" in self.board.adjacent_horizontal_values(row, col) \
+                or "W" in self.board.adjacent_horizontal_values(row, col):
+                    if row != 1:
+                        self.board.representation[row-2, col+1] = "w"
+                        self.board.representation[row-2, col-1] = "w"
+                    if row != 8:
+                        self.board.representation[row+2, col+1] = "w"
+                        self.board.representation[row+2, col-1] = "w"
+                    self.board.representation[row+1, col+1] = "w"
+                    self.board.representation[row, col+1] = "w"
+                    self.board.representation[row-1, col+1] = "w" 
+                    self.board.representation[row+1, col-1] = "w"
+                    self.board.representation[row, col-1] = "w"
+                    self.board.representation[row-1, col-1] = "w"
 
     def add_boat_4(self, pos_init: list, pos_end: list):
         pass
@@ -404,6 +467,8 @@ class Bimaru(Problem):
             elif state.board.hints[i][3] == "C":
                 lista.append(["fill around", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
                 state.board.hints.pop(i)
+            elif state.board.hints[i][3] == "M":
+                lista.append(["fill middle", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
         print(state.board.lines_capacity)
         return lista
 
@@ -427,6 +492,8 @@ class Bimaru(Problem):
             state.fill_left(action[1], action[2])
         elif (action[0]=="fill right"):
             state.fill_right(action[1], action[2])
+        elif (action[0] == "fill middle"):
+            state.fill_middle(action[1], action[2])
         return state
 
     def goal_test(self, state: BimaruState):
