@@ -4,7 +4,7 @@
 
 # Grupo 44:
 # 102908 Luana Ferraz
-# 103555 Ricardo Pereira
+# 103555 Ricardo Pereira 
 
 import sys
 import numpy as np
