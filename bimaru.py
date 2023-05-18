@@ -286,8 +286,10 @@ class BimaruState:
                 self.board.representation[row-1, col] = "w"
                 self.board.representation[row-1, col-1] = "w"  
             else:
-                if "w" in self.board.adjacent_vertical_values(row, col) \
-                    or "W" in self.board.adjacent_vertical_values(row, col):
+                verticals = self.board.adjacent_vertical_values(row, col)
+                horizontals = self.board.adjacent_horizontal_values(row, col)
+                if "w" in verticals or "W" in verticals or \
+                      "M" in horizontals or "m" in horizontals:
                     if col != 1:
                         self.board.representation[row+1, col+2] = "w"
                         self.board.representation[row-1, col+2] = "w"
@@ -300,8 +302,8 @@ class BimaruState:
                     self.board.representation[row-1, col+1] = "w"
                     self.board.representation[row-1, col] = "w"
                     self.board.representation[row-1, col-1] = "w"
-                elif "w" in self.board.adjacent_horizontal_values(row, col) \
-                or "W" in self.board.adjacent_horizontal_values(row, col):
+                elif "w" in horizontals or "W" in horizontals or \
+                    "M" in verticals or "m" in verticals:
                     if row != 1:
                         self.board.representation[row-2, col+1] = "w"
                         self.board.representation[row-2, col-1] = "w"
@@ -500,6 +502,12 @@ class Bimaru(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
+        """
+        Todo preenchido
+        Todas as capacidades
+        Todos os barcos postos
+        (n ha barcos colados)
+        """
         # TODO
         if (state.board.representation[9,6] == "w"):
             return True
