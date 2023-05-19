@@ -503,15 +503,46 @@ class Bimaru(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
         """
-        Todo preenchido
-        Todas as capacidades
+        Todo preenchido #
+        Todas as capacidades #
         Todos os barcos postos
         (n ha barcos colados)
         """
         # TODO
         if (state.board.representation[9,6] == "w"):
             return True
-        pass
+        if np.any(state.board.representation == "_"):
+            return False
+        for i in state.board.lines_capacity:
+            if i not in (-1, 0):
+                return False
+        for i in state.board.cols_capacity:
+            if i not in (-1, 0):
+                return False
+        boats = [1,1,1,1,2,2,2,3,3,4]
+        for line in range(10):
+            for col in range(10):
+                value = state.board.representation[line]
+                if value == "C" or value == "c":
+                    if 1 in boats:
+                        boats.remove(1)
+                elif value == "T" or value == "t":
+                    tamanho = 0
+                    inc = 1
+                    while state.board.representation[line, col + inc] != "b"\
+                          or state.board.representation[line, col + inc] != "B":
+                        if col + inc < 10:
+                            inc += 1
+                        else:
+                            return False
+                        tamanho += 1
+                    if tamanho + 2 not in boats:
+                        return False
+                    else:
+                        boats.remove(tamanho+2)
+
+
+        return False
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
