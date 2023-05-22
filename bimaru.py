@@ -317,14 +317,190 @@ class BimaruState:
                     self.board.representation[row, col-1] = "w"
                     self.board.representation[row-1, col-1] = "w"
 
+    def check_boat_4(self):
+        boats_to_add = []
+        for l in range(10):
+            if(len(boats_to_add)>=2):break           
+            if(self.board.lines_capacity[l]>=4):
+                for col in range(7):
+                    if(len(boats_to_add)>=2):break
+                    value = self.board.get_value(l, col)
+                    if(value!= "w" and value!="w"):
+                        count=0
+                        for i in range(4):
+                            value=self.board.get_value(l, col+i)
+                            if(value=="_"): 
+                                count +=1
+                            elif(value=="r" or value=="R"):
+                                if(i!=3):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="l" or value=="L"):
+                                if(i!=0):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="m" or value=="M"): 
+                                if(i==1 or i==2): 
+                                    count+=1
+                                else: 
+                                    break
+                                
+                        if(count == 4):
+                            boats_to_add += ["four", [l, col], [l, col+3]]
+        for c in range(10):
+
+            if(len(boats_to_add)>=2): break
+            if(self.board.cols_capacity[l]>=1):
+                for line in range(7):
+                    if(len(boats_to_add)>=2):break
+                    value = self.board.get_value(line, c)
+                    if(value!= "w" and value!="w"):
+                        count=0
+                        for i in range(4):
+                            value=self.board.get_value(line, c+i)
+                            if(value=="_"): 
+                                count +=1
+                            elif(value=="b" or value=="B"):
+                                if(i!=3):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="t" or value=="T"):
+                                if(i!=0):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="m" or value=="M"): 
+                                if(i==1 or i==2): 
+                                    count+=1
+                                else: 
+                                    break
+                                
+                        if(count == 4):
+                            boats_to_add += [["four", [line, c], [line+3, c]]]
+        return boats_to_add
+                            
+
+
     def add_boat_4(self, pos_init: list, pos_end: list):
+        # mesma linha
+        if(pos_init[0]-pos_end[0] == 0):
+            if(self.board.get_value(pos_init[0], pos_init[1])!="L"): 
+                self.board.representation[pos_init[0], pos_init[1]] = "l"
+            self.board.update_capacities(pos_init[0], pos_init[1])
+            for i in range(1,3):
+                if(self.board.get_value(pos_init[0], pos_init[1]+i)!="M"): 
+                    self.board.representation[pos_init[0], pos_init[1]+i] = "m"
+                self.board.update_capacities(pos_init[0], pos_init[1]+i)
+            if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
+                self.board.representation[pos_end[0], pos_end[1]] = "r"
+            self.board.update_capacities(pos_end[0], pos_end[1])
+            self.fill_left(pos_init[0], pos_init[1])
+            if(pos_end[0]-1>0):
+                if(self.board.get_value(pos_end[0]-1, pos_end[1])!= "W"):
+                    self.board.representation[pos_end[0]-1, pos_end[1]]= "w" 
+            if(pos_end[0]+1<9):
+                if(self.board.get_value(pos_end[0]+1, pos_end[1])!= "W"):
+                    self.board.representation[pos_end[0]+1, pos_end[1]]= "w"
+
+            if(pos_end[1]<9):
+                for i in range(3):
+                    if(self.board.get_value(pos_end[0]-1+i, pos_end[1]+1)!= "W" and pos_end[0]-1+i<9 and pos_end[0]-1+i>0):
+                        self.board.representation[pos_end[0]-1+i, pos_end[1]+1]= "w"            
+
+        # mesma coluna
+        elif(pos_init[1]-pos_end[1] == 0):
+            if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
+                self.board.representation[pos_init[0], pos_init[1]] = "t"
+            self.board.update_capacities(pos_init[0], pos_init[1])
+            for i in range(1,3):
+                if(self.board.get_value(pos_init[0]+i, pos_init[1])!="M"): 
+                    self.board.representation[pos_init[0]+i, pos_init[1]] = "m"
+                self.board.update_capacities(pos_init[0]+i, pos_init[1])
+            if(self.board.get_value(pos_end[0], pos_end[1])!="B"): 
+                self.board.representation[pos_end[0], pos_end[1]] = "b"
+            self.board.update_capacities(pos_end[0], pos_end[1])
+            self.fill_top(pos_init[0], pos_init[1])
+            if(pos_end[1]-1>0):
+                if(self.board.get_value(pos_end[0], pos_end[1]-1)!= "W"):
+                    self.board.representation[pos_end[0], pos_end[1]-1]= "w" 
+            if(pos_end[1]+1<9):
+                if(self.board.get_value(pos_end[0], pos_end[1]+1)!= "W"):
+                    self.board.representation[pos_end[0], pos_end[1]+1]= "w"
+
+            if(pos_end[0]<9):
+                for i in range(3):
+                    if(self.board.get_value(pos_end[0]+1, pos_end[1]-1+i)!= "W" and pos_end[1]-1+i<9 and pos_end[1]-1+i>0):
+                        self.board.representation[pos_end[0]+1, pos_end[1]-1+i]= "w"           
         pass
+    
     def add_boat_3(self, pos_init: list, pos_end: list):
+        if(pos_init[0]-pos_end[0] == 0):
+            if(self.board.get_value(pos_init[0], pos_init[1])!="L"):
+                self.board.representation[pos_init[0], pos_init[1]] = "l"
+            self.board.update_capacities(pos_init[0], pos_init[1])
+            if(self.board.get_value(pos_init[0], pos_init[1]+i)!="M"):
+                self.board.representation[pos_init[0], pos_init[1]+1] = "m"
+            self.board.update_capacities(pos_init[0], pos_init[1]+1)
+            if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
+                self.board.representation[pos_end[0], pos_end[1]] = "r"
+            self.board.update_capacities(pos_end[0], pos_end[1])
+            self.fill_left(pos_init[0], pos_init[1])
+            if(pos_end[1]<9):
+                for i in range(3):
+                    if(self.board.get_value(pos_end[0]-1+i, pos_end[1]+1)!= "W" and pos_end[0]-1+i<9 and pos_end[0]-1+i>0):
+                        self.board.representation[pos_end[0]-1+i, pos_end[1]+1]= "w"
+
+
+        # mesma coluna
+        elif(pos_init[1]-pos_end[1] == 0):
+            if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
+                self.board.representation[pos_init[0], pos_init[1]] = "t"
+            self.board.update_capacities(pos_init[0], pos_init[1])
+            if(self.board.get_value(pos_init[0]+1, pos_init[1])!="M"): 
+                self.board.representation[pos_init[0]+1, pos_init[1]] = "m"
+            self.board.update_capacities(pos_init[0]+1, pos_init[1])
+            if(self.board.get_value(pos_end[0], pos_end[1])!="B"): 
+                self.board.representation[pos_end[0], pos_end[1]] = "b"
+            self.board.update_capacities(pos_end[0], pos_end[1])
+            self.fill_top(pos_init[0], pos_init[1])
+            if(pos_end[0]<9):
+                for i in range(3):
+                    if(self.board.get_value(pos_end[0]+1, pos_end[1]-1+i)!= "W" and pos_end[1]-1+i<9 and pos_end[1]-1+i>0):
+                        self.board.representation[pos_end[0]+1, pos_end[1]-1+i]= "w"
+
         pass
+
     def add_boat_2(self, pos_init: list, pos_end: list):
             
-        self.board.representation[pos_init[0], pos_end[0]] = "c"
-        pass
+        if(pos_init[0]-pos_end[0] == 0):
+            if(self.board.get_value(pos_init[0], pos_init[1])!="L"):
+                self.board.representation[pos_init[0], pos_init[1]] = "l"
+            self.board.update_capacities(pos_init[0], pos_init[1])
+            
+            if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
+                self.board.representation[pos_init[0], pos_end[1]] = "r"
+            self.board.update_capacities(pos_init[0], pos_end[1])
+            self.fill_left(pos_init[0], pos_init[1])
+            if(self.board.get_value(pos_end[0], pos_end[1]+1)!= "W" and pos_end[1]<9):
+                self.board.representation[pos_end[0], pos_end[1]+1]= "w"
+
+        # mesma coluna
+        elif(pos_init[1]-pos_end[1] == 0):
+            if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
+                self.board.representation[pos_init[0], pos_init[1]] = "t"
+            self.board.update_capacities(pos_init[0], pos_init[1])
+            
+            if(self.board.get_value(pos_end[0], pos_end[1])!="B"): 
+                self.board.representation[pos_end[0], pos_end[1]] = "b"
+            self.board.update_capacities(pos_end[0], pos_end[1]) 
+            self.fill_top(pos_init[0], pos_init[1])
+            if(self.board.get_value(pos_end[0]+1, pos_end[1])!= "W" and pos_end[0]<9):
+                self.board.representation[pos_end[0]+1, pos_end[1]]= "w"
+            pass
+
     def add_boat_1(self, pos_init: list):
         self.board.representation[pos_init[0], pos_init[1]] = "c"
         self.fill_around(pos_init[0], pos_init[1])
@@ -471,7 +647,8 @@ class Bimaru(Problem):
                 state.board.hints.pop(i)
             elif state.board.hints[i][3] == "M":
                 lista.append(["fill middle", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
-        print(state.board.lines_capacity)
+        lista+=state.check_boat_4()
+        
         return lista
 
     def result(self, state: BimaruState, action):
@@ -496,6 +673,8 @@ class Bimaru(Problem):
             state.fill_right(action[1], action[2])
         elif (action[0] == "fill middle"):
             state.fill_middle(action[1], action[2])
+        elif(action[0] == "four"):
+            state.add_boat_4(action[1], action[2])
         return state
 
     def goal_test(self, state: BimaruState):
