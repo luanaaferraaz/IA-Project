@@ -719,9 +719,29 @@ class Bimaru(Problem):
                         return False
                     else:
                         boats.remove(tamanho+2)
-
-
-        return False
+                if value == "L" or value == "l":
+                    tamanho = 0
+                    inc = 1
+                    while state.board.representation[line+inc, col] != "R" \
+                    or state.board.representation[line+inc, col] != "r":
+                        if line+inc < 10:
+                            inc += 1
+                        else:
+                            return False
+                        tamanho += 1
+                    if tamanho + 2 not in boats:
+                        return False
+                    else:
+                        boats.remove(tamanho+2)
+                if value == "R" or value == "r":
+                    if state.board.representation[line-1, col] not in ("M", "m", "L", "l"):
+                        return False
+                if value == "B" or value == "b":
+                    if state.board.representation[line, col-1] not in ("M", "m", "T", "t"):
+                        return False
+        if boats != []:
+            return False
+        return True
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
