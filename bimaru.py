@@ -317,13 +317,145 @@ class BimaruState:
                     self.board.representation[row, col-1] = "w"
                     self.board.representation[row-1, col-1] = "w"
 
+    def check_boat_1(self):
+        boats_to_add = []
+        for l in range(10):
+            if(self.board.lines_capacity[l]>=1):
+                for col in range(10):
+                    value = self.board.get_value(l, col)
+                    if(value== "_"):
+                        boats_to_add += ["one", [l, col]]
+        for c in range(10):
+            if(self.board.cols_capacity[l]>=2):
+                for line in range(9):
+                    value = self.board.get_value(line, c)
+                    if(value!= "_"):
+                        boats_to_add += [["two", [line, c], [line+1, c]]]
+        return boats_to_add
+
+    def check_boat_2(self):
+        boats_to_add = []
+        for l in range(10):
+            if(self.board.lines_capacity[l]>=2):
+                for col in range(9):
+                    value = self.board.get_value(l, col)
+                    if(value!= "w" and value!="w"):
+                        count=0
+                        for i in range(2):
+                            value=self.board.get_value(l, col+i)
+                            if(value=="_"): 
+                                count +=1
+                            elif(value=="r" or value=="R"):
+                                if(i!=1):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="l" or value=="L"):
+                                if(i!=0):
+                                    break
+                                else: 
+                                    count +=1
+                            else: 
+                                break;
+                                
+                        if(count == 2):
+                            boats_to_add += ["two", [l, col], [l, col+1]]
+        for c in range(10):
+            if(self.board.cols_capacity[l]>=2):
+                for line in range(9):
+                    value = self.board.get_value(line, c)
+                    if(value!= "w" and value!="w"):
+                        count=0
+                        for i in range(2):
+                            value=self.board.get_value(line, c+i)
+                            if(value=="_"): 
+                                count +=1
+                            elif(value=="b" or value=="B"):
+                                if(i!=1):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="t" or value=="T"):
+                                if(i!=0):
+                                    break
+                                else: 
+                                    count +=1
+                            else: 
+                                break;
+                                
+                        if(count == 2):
+                            boats_to_add += [["two", [line, c], [line+1, c]]]
+        return boats_to_add
+
+    def check_boat_3(self):
+        boats_to_add = []
+        for l in range(10):
+            if(self.board.lines_capacity[l]>=3):
+                for col in range(8):
+                    value = self.board.get_value(l, col)
+                    if(value!= "w" and value!="w"):
+                        count=0
+                        for i in range(3):
+                            value=self.board.get_value(l, col+i)
+                            if(value=="_"): 
+                                count +=1
+                            elif(value=="r" or value=="R"):
+                                if(i!=2):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="l" or value=="L"):
+                                if(i!=0):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="m" or value=="M"): 
+                                if(i==1): 
+                                    count+=1
+                                else: 
+                                    break
+                            else: 
+                                break;
+                                
+                        if(count == 3):
+                            boats_to_add += ["three", [l, col], [l, col+2]]
+        for c in range(10):
+            if(self.board.cols_capacity[l]>=3):
+                for line in range(8):
+                    value = self.board.get_value(line, c)
+                    if(value!= "w" and value!="w"):
+                        count=0
+                        for i in range(3):
+                            value=self.board.get_value(line, c+i)
+                            if(value=="_"): 
+                                count +=1
+                            elif(value=="b" or value=="B"):
+                                if(i!=2):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="t" or value=="T"):
+                                if(i!=0):
+                                    break
+                                else: 
+                                    count +=1
+                            elif(value=="m" or value=="M"): 
+                                if(i==1): 
+                                    count+=1
+                                else: 
+                                    break
+                            else: 
+                                break;
+                                
+                        if(count == 3):
+                            boats_to_add += [["three", [line, c], [line+2, c]]]
+        return boats_to_add
+
     def check_boat_4(self):
         boats_to_add = []
         for l in range(10):
-            if(len(boats_to_add)>=2):break           
             if(self.board.lines_capacity[l]>=4):
                 for col in range(7):
-                    if(len(boats_to_add)>=2):break
                     value = self.board.get_value(l, col)
                     if(value!= "w" and value!="w"):
                         count=0
@@ -346,15 +478,15 @@ class BimaruState:
                                     count+=1
                                 else: 
                                     break
+                            else: 
+                                break;
                                 
                         if(count == 4):
                             boats_to_add += ["four", [l, col], [l, col+3]]
         for c in range(10):
 
-            if(len(boats_to_add)>=2): break
-            if(self.board.cols_capacity[l]>=1):
+            if(self.board.cols_capacity[l]>=4):
                 for line in range(7):
-                    if(len(boats_to_add)>=2):break
                     value = self.board.get_value(line, c)
                     if(value!= "w" and value!="w"):
                         count=0
@@ -377,6 +509,8 @@ class BimaruState:
                                     count+=1
                                 else: 
                                     break
+                            else: 
+                                break;
                                 
                         if(count == 4):
                             boats_to_add += [["four", [line, c], [line+3, c]]]
