@@ -322,15 +322,24 @@ class BimaruState:
         for l in range(10):
             if(self.board.lines_capacity[l]>=1):
                 for col in range(10):
+                    
+                    if(self.board.cols_capacity[col]<1):
+                        continue
                     value = self.board.get_value(l, col)
                     if(value== "_"):
-                        boats_to_add += ["one", [l, col]]
+                        boats_to_add += [["one", [l, col]]]
+                        return boats_to_add
+
         for c in range(10):
             if(self.board.cols_capacity[l]>=2):
                 for line in range(9):
+                    if(self.board.lines_capacity[line]<1):
+                        continue
                     value = self.board.get_value(line, c)
                     if(value!= "_"):
-                        boats_to_add += [["two", [line, c], [line+1, c]]]
+                        boats_to_add += [["one", [line, c]]]
+                        return boats_to_add
+
         return boats_to_add
 
     def check_boat_2(self):
@@ -338,10 +347,14 @@ class BimaruState:
         for l in range(10):
             if(self.board.lines_capacity[l]>=2):
                 for col in range(9):
+                    if(self.board.cols_capacity[col]<1):
+                        continue
                     value = self.board.get_value(l, col)
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(2):
+                            if(self.board.cols_capacity[col+i]<1):
+                                break
                             value=self.board.get_value(l, col+i)
                             if(value=="_"): 
                                 count +=1
@@ -359,15 +372,21 @@ class BimaruState:
                                 break;
                                 
                         if(count == 2):
-                            boats_to_add += ["two", [l, col], [l, col+1]]
+                            boats_to_add += [["two", [l, col], [l, col+1]]]
+                            return boats_to_add
+
         for c in range(10):
             if(self.board.cols_capacity[l]>=2):
                 for line in range(9):
+                    if(self.board.lines_capacity[line]<1):
+                        continue
                     value = self.board.get_value(line, c)
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(2):
-                            value=self.board.get_value(line, c+i)
+                            if(self.board.lines_capacity[line+i]<1):
+                                break
+                            value=self.board.get_value(line+i, c)
                             if(value=="_"): 
                                 count +=1
                             elif(value=="b" or value=="B"):
@@ -385,6 +404,8 @@ class BimaruState:
                                 
                         if(count == 2):
                             boats_to_add += [["two", [line, c], [line+1, c]]]
+                            return boats_to_add
+
         return boats_to_add
 
     def check_boat_3(self):
@@ -392,10 +413,14 @@ class BimaruState:
         for l in range(10):
             if(self.board.lines_capacity[l]>=3):
                 for col in range(8):
+                    if(self.board.cols_capacity[col]<1):
+                        continue
                     value = self.board.get_value(l, col)
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(3):
+                            if(self.board.cols_capacity[col+i]<1):
+                                break
                             value=self.board.get_value(l, col+i)
                             if(value=="_"): 
                                 count +=1
@@ -418,15 +443,21 @@ class BimaruState:
                                 break;
                                 
                         if(count == 3):
-                            boats_to_add += ["three", [l, col], [l, col+2]]
+                            boats_to_add += [["three", [l, col], [l, col+2]]]
+                            return boats_to_add
+
         for c in range(10):
             if(self.board.cols_capacity[l]>=3):
                 for line in range(8):
+                    if(self.board.lines_capacity[line]<1):
+                        continue
                     value = self.board.get_value(line, c)
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(3):
-                            value=self.board.get_value(line, c+i)
+                            if(self.board.lines_capacity[line+i]<1):
+                                break
+                            value=self.board.get_value(line+i, c)
                             if(value=="_"): 
                                 count +=1
                             elif(value=="b" or value=="B"):
@@ -449,6 +480,8 @@ class BimaruState:
                                 
                         if(count == 3):
                             boats_to_add += [["three", [line, c], [line+2, c]]]
+                            return boats_to_add
+
         return boats_to_add
 
     def check_boat_4(self):
@@ -456,10 +489,14 @@ class BimaruState:
         for l in range(10):
             if(self.board.lines_capacity[l]>=4):
                 for col in range(7):
+                    if(self.board.cols_capacity[col]<1):
+                        continue
                     value = self.board.get_value(l, col)
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(4):
+                            if(self.board.cols_capacity[col+i]<1):
+                                break
                             value=self.board.get_value(l, col+i)
                             if(value=="_"): 
                                 count +=1
@@ -482,16 +519,21 @@ class BimaruState:
                                 break;
                                 
                         if(count == 4):
-                            boats_to_add += ["four", [l, col], [l, col+3]]
+                            boats_to_add += [["four", [l, col], [l, col+3]]]
+                            return boats_to_add
         for c in range(10):
 
             if(self.board.cols_capacity[l]>=4):
                 for line in range(7):
+                    if(self.board.lines_capacity[line]<1):
+                        continue
                     value = self.board.get_value(line, c)
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(4):
-                            value=self.board.get_value(line, c+i)
+                            if(self.board.lines_capacity[line+i]<1):
+                                break
+                            value=self.board.get_value(line+i, c)
                             if(value=="_"): 
                                 count +=1
                             elif(value=="b" or value=="B"):
@@ -514,9 +556,8 @@ class BimaruState:
                                 
                         if(count == 4):
                             boats_to_add += [["four", [line, c], [line+3, c]]]
+                            return boats_to_add
         return boats_to_add
-                            
-
 
     def add_boat_4(self, pos_init: list, pos_end: list):
         # mesma linha
@@ -568,6 +609,8 @@ class BimaruState:
                 for i in range(3):
                     if(self.board.get_value(pos_end[0]+1, pos_end[1]-1+i)!= "W" and pos_end[1]-1+i<9 and pos_end[1]-1+i>0):
                         self.board.representation[pos_end[0]+1, pos_end[1]-1+i]= "w"           
+        self.board.boats_left.remove(4)
+
         pass
     
     def add_boat_3(self, pos_init: list, pos_end: list):
@@ -575,7 +618,7 @@ class BimaruState:
             if(self.board.get_value(pos_init[0], pos_init[1])!="L"):
                 self.board.representation[pos_init[0], pos_init[1]] = "l"
             self.board.update_capacities(pos_init[0], pos_init[1])
-            if(self.board.get_value(pos_init[0], pos_init[1]+i)!="M"):
+            if(self.board.get_value(pos_init[0], pos_init[1]+1)!="M"):
                 self.board.representation[pos_init[0], pos_init[1]+1] = "m"
             self.board.update_capacities(pos_init[0], pos_init[1]+1)
             if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
@@ -605,6 +648,8 @@ class BimaruState:
                     if(self.board.get_value(pos_end[0]+1, pos_end[1]-1+i)!= "W" and pos_end[1]-1+i<9 and pos_end[1]-1+i>0):
                         self.board.representation[pos_end[0]+1, pos_end[1]-1+i]= "w"
 
+        self.board.boats_left.remove(3)
+
         pass
 
     def add_boat_2(self, pos_init: list, pos_end: list):
@@ -621,6 +666,7 @@ class BimaruState:
             if(self.board.get_value(pos_end[0], pos_end[1]+1)!= "W" and pos_end[1]<9):
                 self.board.representation[pos_end[0], pos_end[1]+1]= "w"
 
+
         # mesma coluna
         elif(pos_init[1]-pos_end[1] == 0):
             if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
@@ -633,11 +679,14 @@ class BimaruState:
             self.fill_top(pos_init[0], pos_init[1])
             if(self.board.get_value(pos_end[0]+1, pos_end[1])!= "W" and pos_end[0]<9):
                 self.board.representation[pos_end[0]+1, pos_end[1]]= "w"
-            pass
+        self.board.boats_left.remove(2)
+
+        pass
 
     def add_boat_1(self, pos_init: list):
         self.board.representation[pos_init[0], pos_init[1]] = "c"
         self.fill_around(pos_init[0], pos_init[1])
+        self.board.boats_left.remove(1)
         pass
 
 class Board:
@@ -650,6 +699,7 @@ class Board:
         self.lines_capacity = lines_capacity
         self.cols_capacity = cols_capacity     
         self.hints = hints
+        self.boats_left=[1,1,1,1,2,2,2,3,3,4]
 
     def update_capacities(self, row: int, col: int):
         self.lines_capacity[row]-= 1
@@ -781,7 +831,18 @@ class Bimaru(Problem):
                 state.board.hints.pop(i)
             elif state.board.hints[i][3] == "M":
                 lista.append(["fill middle", int(state.board.hints[i][1]), int(state.board.hints[i][2])])
-        lista+=state.check_boat_4()
+        if(4 in state.board.boats_left):
+            lista+=state.check_boat_4()
+        print(lista)
+        if(3 in state.board.boats_left):
+            lista+=state.check_boat_3()
+        print(lista)
+        if(2 in state.board.boats_left):
+            lista+=state.check_boat_2()
+        print(lista)
+        if(1 in state.board.boats_left):
+            lista+=state.check_boat_1()
+        print(lista)
         
         return lista
 
@@ -809,6 +870,13 @@ class Bimaru(Problem):
             state.fill_middle(action[1], action[2])
         elif(action[0] == "four"):
             state.add_boat_4(action[1], action[2])
+        elif(action[0] == "three"):
+            state.add_boat_3(action[1], action[2])  
+        elif(action[0] == "two"):
+            state.add_boat_2(action[1], action[2])
+        elif(action[0] == "one"):
+            state.add_boat_1(action[1])  
+        print(state.board.boats_left)    
         return state
 
     def goal_test(self, state: BimaruState):
