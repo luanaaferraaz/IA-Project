@@ -277,10 +277,10 @@ class BimaruState:
                 horizontals = self.board.adjacent_horizontal_values(row, col)
                 if "w" in verticals or "W" in verticals or \
                       "M" in horizontals or "m" in horizontals:
-                    if col != 1:
+                    if col != 8:
                         self.board.representation[row+1, col+2] = "w"
                         self.board.representation[row-1, col+2] = "w"
-                    if col != 8:
+                    if col != 1:
                         self.board.representation[row+1, col-2] = "w"
                         self.board.representation[row-1, col-2] = "w"
                     self.board.representation[row+1, col+1] = "w"
@@ -795,6 +795,8 @@ class Board:
         return(self.get_value(row+1, col-1), self.get_value(row-1,col+1))
     
     def print_solution(self):
+        for i in self.hints:
+            self.representation[int(i[1]), int(i[2])] = "W"
         for line in range(10):
             for col in range(10):
                 value = self.representation[line, col]
@@ -853,7 +855,6 @@ class Bimaru(Problem):
     def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-
         # TODO
         lista = []
         for i in range(len(state.board.lines_capacity)):
@@ -903,7 +904,6 @@ class Bimaru(Problem):
         if(1 in state.board.boats_left):
             lista+=state.check_boat_1()
             return lista
-        
         return lista
 
     def result(self, state: BimaruState, action):
@@ -971,7 +971,7 @@ class Bimaru(Problem):
                     while not(state.board.representation[line+inc, col] == "b"):
                         if state.board.representation[line+inc, col] == "B":
                             break
-                        if line + inc < 10:
+                        if line + inc < 9:
                             inc += 1
                         else:
                             return False
@@ -986,7 +986,7 @@ class Bimaru(Problem):
                     while not(state.board.representation[line, col+inc] == "R"):
                         if state.board.representation[line, col+inc] == "r":
                             break
-                        if col+inc < 10:
+                        if col+inc < 9:
                             inc += 1
                         else:
                             return False
@@ -1029,7 +1029,6 @@ if __name__ == "__main__":
     goal_node = depth_first_tree_search(problem)
     #goal_node = breadth_first_tree_search(problem)
     
-    print("Solution:")
     goal_node.state.board.print_solution()
 
     # Mostrar valor na posição (3, 3):
