@@ -729,6 +729,7 @@ class BimaruState:
         self.board.representation[pos_init[0], pos_init[1]] = "c"
         self.fill_around(pos_init[0], pos_init[1])
         self.board.boats_left.remove(1)
+        self.board.update_capacities(pos_init[0], pos_init[1])
         pass
 
 class Board:
@@ -795,6 +796,16 @@ class Board:
         elif (((col==9) and (row == 9)) or ((col == 0) and (row == 0))):
             return ("","")
         return(self.get_value(row+1, col-1), self.get_value(row-1,col+1))
+    
+    def print_solution(self):
+        for line in range(10):
+            for col in range(10):
+                value = self.representation[line, col]
+                if value == "w":
+                    print(".", end="")
+                else:
+                    print(value, end="")
+            print()
 
     @staticmethod
     def parse_instance():
@@ -949,11 +960,13 @@ class Bimaru(Problem):
         """
         # TODO
         print(state.board.representation)
-        print("TESTE")
+        print("______________________________________________________")
         if np.any(state.board.representation == "_"):
             return False
         for i in state.board.lines_capacity:
             if i not in (-1, 0):
+                print(state.board.lines_capacity)
+                print("OLALFISGNBOJSNBOSDNBDSNBLKSDNBKLKDNSLBNSDLKNBDLKNBFLKNBDFL")
                 return False
         for i in state.board.cols_capacity:
             if i not in (-1, 0):
@@ -961,16 +974,18 @@ class Bimaru(Problem):
         boats = [1,1,1,1,2,2,2,3,3,4]
         for line in range(10):
             for col in range(10):
-                value = state.board.representation[line]
+                value = state.board.representation[line, col]
                 if value == "C" or value == "c":
                     if 1 in boats:
                         boats.remove(1)
                 elif value == "T" or value == "t":
                     tamanho = 0
                     inc = 1
-                    while state.board.representation[line, col + inc] != "b"\
-                          or state.board.representation[line, col + inc] != "B":
-                        if col + inc < 10:
+                    print(line,col)
+                    while not(state.board.representation[line+inc, col] == "b"):
+                        if state.board.representation[line+inc, col] == "B":
+                            break
+                        if line + inc < 10:
                             inc += 1
                         else:
                             return False
@@ -982,24 +997,30 @@ class Bimaru(Problem):
                 if value == "L" or value == "l":
                     tamanho = 0
                     inc = 1
-                    while state.board.representation[line+inc, col] != "R" \
-                    or state.board.representation[line+inc, col] != "r":
-                        if line+inc < 10:
+                    while not(state.board.representation[line, col+inc] == "R"):
+                        if state.board.representation[line, col+inc] == "r":
+                            break
+                        if col+inc < 10:
                             inc += 1
                         else:
+                            print("else")
                             return False
                         tamanho += 1
                     if tamanho + 2 not in boats:
+                        print("b")
                         return False
                     else:
                         boats.remove(tamanho+2)
                 if value == "R" or value == "r":
-                    if state.board.representation[line-1, col] not in ("M", "m", "L", "l"):
+                    if state.board.representation[line, col-1] not in ("M", "m", "L", "l"):
+                        print("R")
                         return False
                 if value == "B" or value == "b":
-                    if state.board.representation[line, col-1] not in ("M", "m", "T", "t"):
+                    if state.board.representation[line-1, col] not in ("M", "m", "T", "t"):
+                        print("B")
                         return False
         if boats != []:
+            print("vazio")
             return False
         return True
 
@@ -1017,31 +1038,18 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    """board = Board()
-    board.parse_instance(board)
-    problem = Bimaru(board)
-    initial_state = BimaruState(board)
-
-    print(board.representation)
-    print("\n")
-    print(board.adjacent_vertical_values(10, 5))
-    print("\n")"""
 
     board = Board.parse_instance()
 
     problem = Bimaru(board)
     
-    #initial_state = BimaruState(board)
-    
-    #print(board.representation)
-    
-    #action = problem.actions(initial_state)
-    #result_state = problem.result(initial_state, action)
+
 
     goal_node = depth_first_tree_search(problem)
     #goal_node = breadth_first_tree_search(problem)
     
-    print("Solution:\n", goal_node.state.board.representation, sep="")
+    print("Solution:")
+    goal_node.state.board.print_solution()
 
     # Mostrar valor na posição (3, 3):
 
