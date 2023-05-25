@@ -5,7 +5,7 @@
 # Grupo 44:
 # 102908 Luana Ferraz
 # 103555 Ricardo Pereira 
-
+#import time
 import sys
 import numpy as np
 import copy
@@ -410,7 +410,7 @@ class BimaruState:
                     if(self.board.cols_capacity[col]<1):
                         continue
                     value = self.board.get_value(l, col)
-                    if(value!= "w" and value!="w"):
+                    if(value== "_" or value=="L" or value == "l"):
                         count=0
                         for i in range(2):
                             if(self.board.cols_capacity[col+i]<1):
@@ -442,7 +442,7 @@ class BimaruState:
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    if(value!= "w" and value!="w"):
+                    if(value== "_" or value=="t" or value == "T"):
                         count=0
                         for i in range(2):
                             if(self.board.lines_capacity[line+i]<1):
@@ -478,7 +478,7 @@ class BimaruState:
                     if(self.board.cols_capacity[col]<1):
                         continue
                     value = self.board.get_value(l, col)
-                    if(value!= "w" and value!="w"):
+                    if(value== "_" or value=="L" or value == "l"):
                         count=0
                         for i in range(3):
                             if(self.board.cols_capacity[col+i]<1):
@@ -516,7 +516,7 @@ class BimaruState:
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    if(value!= "w" and value!="w"):
+                    if(value== "_" or value=="t" or value == "T"):
                         count=0
                         for i in range(3):
                             if(self.board.lines_capacity[line+i]<1):
@@ -556,9 +556,9 @@ class BimaruState:
                     if(self.board.cols_capacity[col]<1):
                         continue
                     value = self.board.get_value(l, col)
-                    if(value!= "w" and value!="w"):
+                    if(value== "_" or value=="L" or value == "l"):
                         count=0
-                        for i in range(4):
+                        for i in range(3,-1,-1):
                             if(self.board.cols_capacity[col+i]<1):
                                 break
                             value=self.board.get_value(l, col+i)
@@ -592,9 +592,9 @@ class BimaruState:
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    if(value!= "w" and value!="w"):
+                    if(value== "_" or value=="t" or value == "T"):
                         count=0
-                        for i in range(4):
+                        for i in range(3,-1,-1):
                             if(self.board.lines_capacity[line+i]<1):
                                 break
                             value=self.board.get_value(line+i, c)
@@ -949,6 +949,8 @@ class Bimaru(Problem):
         Todos os barcos postos
         (n ha barcos colados
         """
+        #print(state.board.representation, "\n")
+
         if np.any(state.board.representation == "_"):
             return False
         for i in state.board.lines_capacity:
@@ -1019,7 +1021,7 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-
+    #start = time.time()
     board = Board.parse_instance()
 
     problem = Bimaru(board)
@@ -1028,9 +1030,11 @@ if __name__ == "__main__":
 
     goal_node = depth_first_tree_search(problem)
     #goal_node = breadth_first_tree_search(problem)
-    
-    goal_node.state.board.print_solution()
+    #goal_node = greedy_search(problem)
 
+    goal_node.state.board.print_solution()
+    #end = time.time()
+    #print(end-start)
     # Mostrar valor na posição (3, 3):
 
 
