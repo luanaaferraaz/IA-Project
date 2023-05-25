@@ -512,12 +512,10 @@ class BimaruState:
         for c in range(10):
             
             if(self.board.cols_capacity[c]>=3):
-                print(c)
                 for line in range(8):
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    print("ola")
                     if(value!= "w" and value!="w"):
                         count=0
                         for i in range(3):
@@ -543,7 +541,6 @@ class BimaruState:
                                     break
                             else: 
                                 break
-                        print("COUNT:", count, c)       
                         if(count == 3):
                             if(self.is_free_vertical(line, c, line+2, c)):
                                 boats_to_add += [["three", [line, c], [line+2, c]]]
@@ -896,13 +893,9 @@ class Bimaru(Problem):
                 return lista
         if(4 in state.board.boats_left):
             lista+=state.check_boat_4()
-            print(lista)
-            print(4)
             return lista
         if(3 in state.board.boats_left):
             lista+=state.check_boat_3()
-            print(lista)
-            print(3)
             return lista
         if(2 in state.board.boats_left):
             lista+=state.check_boat_2()
@@ -910,7 +903,6 @@ class Bimaru(Problem):
         if(1 in state.board.boats_left):
             lista+=state.check_boat_1()
             return lista
-        print(lista)
         
         return lista
 
@@ -945,7 +937,6 @@ class Bimaru(Problem):
             state_new.add_boat_2(action[1], action[2])
         elif(action[0] == "one" and 1 in state_new.board.boats_left):
             state_new.add_boat_1(action[1])  
-        #print(state.board.boats_left)    
         return state_new
 
     def goal_test(self, state: BimaruState):
@@ -958,15 +949,11 @@ class Bimaru(Problem):
         Todos os barcos postos
         (n ha barcos colados
         """
-        # TODO
-        print(state.board.representation)
-        print("______________________________________________________")
         if np.any(state.board.representation == "_"):
             return False
         for i in state.board.lines_capacity:
             if i not in (-1, 0):
-                print(state.board.lines_capacity)
-                print("OLALFISGNBOJSNBOSDNBDSNBLKSDNBKLKDNSLBNSDLKNBDLKNBFLKNBDFL")
+                
                 return False
         for i in state.board.cols_capacity:
             if i not in (-1, 0):
@@ -981,7 +968,6 @@ class Bimaru(Problem):
                 elif value == "T" or value == "t":
                     tamanho = 0
                     inc = 1
-                    print(line,col)
                     while not(state.board.representation[line+inc, col] == "b"):
                         if state.board.representation[line+inc, col] == "B":
                             break
@@ -1003,24 +989,19 @@ class Bimaru(Problem):
                         if col+inc < 10:
                             inc += 1
                         else:
-                            print("else")
                             return False
                         tamanho += 1
                     if tamanho + 2 not in boats:
-                        print("b")
                         return False
                     else:
                         boats.remove(tamanho+2)
                 if value == "R" or value == "r":
                     if state.board.representation[line, col-1] not in ("M", "m", "L", "l"):
-                        print("R")
                         return False
                 if value == "B" or value == "b":
                     if state.board.representation[line-1, col] not in ("M", "m", "T", "t"):
-                        print("B")
                         return False
         if boats != []:
-            print("vazio")
             return False
         return True
 
