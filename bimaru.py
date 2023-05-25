@@ -54,8 +54,6 @@ class BimaruState:
                 self.board.representation[row-1, col] = "w"
             if(row==8):
                 self.board.representation[row+1, col+1] = "w"
-                self.board.representation[row+1, col] = "b"
-                self.board.update_capacities(row+1, col)
             else:
                 self.board.representation[row+1, col+1] = "w"
                 self.board.representation[row+2, col+1] = "w"
@@ -66,21 +64,18 @@ class BimaruState:
                 self.board.representation[row-1, col] = "w"
             if(row==8):
                 self.board.representation[row+1, col-1] = "w"
-                self.board.representation[row+1, col] = "b"
-                self.board.update_capacities(row+1, col)
             else:
                 self.board.representation[row+1, col-1] = "w"
                 self.board.representation[row+2, col-1] = "w"
         else:
             self.board.representation[row, col-1] = "w"
             self.board.representation[row, col+1] = "w"
-            self.board.representation[row-1, col+1] = "w"
-            self.board.representation[row-1, col] = "w"
-            self.board.representation[row-1, col-1] = "w"
+            if(row!=0):
+                self.board.representation[row-1, col+1] = "w"
+                self.board.representation[row-1, col] = "w"
+                self.board.representation[row-1, col-1] = "w"
             if(row==8):
                 self.board.representation[row+1, col+1] = "w"
-                self.board.representation[row+1, col] = "b"
-                self.board.update_capacities(row+1, col)
                 self.board.representation[row+1, col-1] = "w"
             else:
                 self.board.representation[row+1, col+1] = "w"
@@ -97,8 +92,7 @@ class BimaruState:
                 self.board.representation[row+1, col] = "w"
             if(row==1):
                 self.board.representation[row-1, col+1] = "w"
-                self.board.representation[row-1, col] = "t"
-                self.board.update_capacities(row-1, col)
+
             else:
                 self.board.representation[row-1, col+1] = "w"
                 self.board.representation[row-2, col+1] = "w"
@@ -109,8 +103,6 @@ class BimaruState:
                 self.board.representation[row+1, col] = "w"
             if(row==1):
                 self.board.representation[row-1, col-1] = "w"
-                self.board.representation[row-1, col] = "t"
-                self.board.update_capacities(row-1, col)
             else:
                 self.board.representation[row-1, col-1] = "w"
                 self.board.representation[row-2, col-1] = "w"
@@ -123,8 +115,6 @@ class BimaruState:
                 self.board.representation[row+1, col-1] = "w"
             if(row==1):
                 self.board.representation[row-1, col+1] = "w"
-                self.board.representation[row-1, col] = "t"
-                self.board.update_capacities(row-1, col)
                 self.board.representation[row-1, col-1] = "w"
             else:
                 self.board.representation[row-1, col+1] = "w"
@@ -153,8 +143,6 @@ class BimaruState:
                 self.board.representation[row+1, col] = "w"
                 self.board.representation[row+1, col+1] = "w"
             self.board.representation[row, col+1] = "w"
-            self.board.representation[row, col-1] = "l"
-            self.board.update_capacities(row, col-1)
 
         else:
             if row != 0:
@@ -192,8 +180,6 @@ class BimaruState:
                 self.board.representation[row-1, col] = "w"
                 self.board.representation[row-1, col+1] = "w"
             self.board.representation[row, col-1] = "w"
-            self.board.representation[row, col+1] = "r"
-            self.board.update_capacities(row, col+1)
 
         else:
             if (row != 9):
@@ -318,6 +304,77 @@ class BimaruState:
                     self.board.representation[row, col-1] = "w"
                     self.board.representation[row-1, col-1] = "w"
 
+    def is_free_around(self, row, col):
+        (up, down) = self.board.adjacent_vertical_values(row, col)
+        if(up not in ("W", "w", "", "_") or down not in ("W", "w", "", "_")):
+            return False
+        (left, right) = self.board.adjacent_horizontal_values(row, col)
+        if(left not in ("W", "w", "", "_") or right not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_updown_values(row, col)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_downup_values(row, col)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        return True
+
+    def is_free_vertical(self, row_i, col_i, row_e, col_e):
+        (up, down) = self.board.adjacent_vertical_values(row_i, col_i)
+        if(up not in ("W", "w", "", "_")):
+            return False
+        (left, right) = self.board.adjacent_horizontal_values(row_i, col_i)
+        if(left not in ("W", "w", "", "_") or right not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_updown_values(row_i, col_i)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_downup_values(row_i, col_i)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        
+        (up, down) = self.board.adjacent_vertical_values(row_e, col_e)
+        if(down not in ("W", "w", "", "_")):
+            return False
+        (left, right) = self.board.adjacent_horizontal_values(row_e, col_e)
+        if(left not in ("W", "w", "", "_") or right not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_updown_values(row_e, col_e)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_downup_values(row_e, col_e)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        return True
+    
+    def is_free_horizontal(self, row_i, col_i, row_e, col_e):
+        (up, down) = self.board.adjacent_vertical_values(row_i, col_i)
+        if(up not in ("W", "w", "", "_") or down not in ("W", "w", "", "_")):
+            return False
+        (left, right) = self.board.adjacent_horizontal_values(row_i, col_i)
+        if(left not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_updown_values(row_i, col_i)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_downup_values(row_i, col_i)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        
+        (up, down) = self.board.adjacent_vertical_values(row_e, col_e)
+        if(up not in ("W", "w", "", "_") or down not in ("W", "w", "", "_")):
+            return False
+        (left, right) = self.board.adjacent_horizontal_values(row_e, col_e)
+        if(right not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_updown_values(row_e, col_e)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        (diag1, diag2) = self.board.adjacent_diagonal_downup_values(row_e, col_e)
+        if(diag1 not in ("W", "w", "", "_") or diag2 not in ("W", "w", "", "_")):
+            return False
+        return True
+
     def check_boat_1(self):
         boats_to_add = []
         for l in range(10):
@@ -328,7 +385,8 @@ class BimaruState:
                         continue
                     value = self.board.get_value(l, col)
                     if(value== "_"):
-                        boats_to_add += [["one", [l, col]]]
+                        if(self.is_free_around(l, col)):
+                            boats_to_add += [["one", [l, col]]]
                      
 
         for c in range(10):
@@ -338,7 +396,8 @@ class BimaruState:
                         continue
                     value = self.board.get_value(line, c)
                     if(value == "_"):
-                        boats_to_add += [["one", [line, c]]]
+                        if(self.is_free_around(line, c)):
+                            boats_to_add += [["one", [line, c]]]
                       
 
         return boats_to_add
@@ -373,7 +432,8 @@ class BimaruState:
                                 break
                                 
                         if(count == 2):
-                            boats_to_add += [["two", [l, col], [l, col+1]]]
+                            if(self.is_free_horizontal(l, col, l, col+1)):
+                                boats_to_add += [["two", [l, col], [l, col+1]]]
 
 
         for c in range(10):
@@ -404,7 +464,8 @@ class BimaruState:
                                 break
                                 
                         if(count == 2):
-                            boats_to_add += [["two", [line, c], [line+1, c]]]
+                            if(self.is_free_vertical(line, c, line+1, c)):
+                                boats_to_add += [["two", [line, c], [line+1, c]]]
                         
 
         return boats_to_add
@@ -444,7 +505,8 @@ class BimaruState:
                                 break
                                 
                         if(count == 3):
-                            boats_to_add += [["three", [l, col], [l, col+2]]]
+                            if(self.is_free_horizontal(l, col, l, col+2)):
+                                boats_to_add += [["three", [l, col], [l, col+2]]]
                             
 
         for c in range(10):
@@ -483,7 +545,8 @@ class BimaruState:
                                 break
                         print("COUNT:", count, c)       
                         if(count == 3):
-                            boats_to_add += [["three", [line, c], [line+2, c]]]
+                            if(self.is_free_vertical(line, c, line+2, c)):
+                                boats_to_add += [["three", [line, c], [line+2, c]]]
                             
 
         return boats_to_add
@@ -523,7 +586,8 @@ class BimaruState:
                                 break
                                 
                         if(count == 4):
-                            boats_to_add += [["four", [l, col], [l, col+3]]]
+                            if(self.is_free_horizontal(l, col, l, col+3)):
+                                boats_to_add += [["four", [l, col], [l, col+3]]]
         for c in range(10):
 
             if(self.board.cols_capacity[c]>=4):
@@ -558,7 +622,8 @@ class BimaruState:
                                 break
                                 
                         if(count == 4):
-                            boats_to_add += [["four", [line, c], [line+3, c]]]
+                            if(self.is_free_vertical(line, c, line+3, c)):
+                                boats_to_add += [["four", [line, c], [line+3, c]]]
 
         return boats_to_add
 
@@ -669,14 +734,14 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    def __init__(self, lines, cols, lines_capacity, cols_capacity, hints, representation):
+    def __init__(self, lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left):
         self.representation = representation
         self.lines = lines
         self.cols = cols
         self.lines_capacity = lines_capacity
         self.cols_capacity = cols_capacity     
         self.hints = hints
-        self.boats_left=[1,1,1,1,2,2,2,3,3,4]
+        self.boats_left= boats_left
 
     def update_capacities(self, row: int, col: int):
         self.lines_capacity[row]-= 1
@@ -692,44 +757,44 @@ class Board:
         respectivamente."""
         # TODO
         if (row == 0):
-            return ("", self.representation[(row+1,col)])
+            return ("", self.get_value(row+1,col))
         elif (row >= 9):
-            return (self.representation[(row-1,col)], "")
-        return(self.representation[(row-1, col)], self.representation[(row+1,col)])
+            return (self.get_value(row-1,col), "")
+        return(self.get_value(row-1, col), self.get_value(row+1,col))
 
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
         # TODO
         if (col == 0):
-            return ("", self.representation[(row,col+1)])
+            return ("", self.get_value(row,col+1))
         elif (col >= 9):
-            return (self.representation[(row,col-1)], "")
-        return(self.representation[(row, col-1)], self.representation[(row,col+1)])
+            return (self.get_value(row,col-1), "")
+        return(self.get_value(row, col-1), self.get_value(row,col+1))
 
     def adjacent_diagonal_updown_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores na diagonal de cima para baixo da esquerda para a direita,
         respectivamente."""
         # TODO
         if ((col == 0) and (row < 9)) or ((row == 0) and (col < 9)): #n verifica se a linha ou coluna é u  valor negativo ou maior que 9, precisamos dessa verificação?
-            return ("", self.representation[(row+1,col+1)])
+            return ("", self.get_value(row+1,col+1))
         elif ((col == 9) and (row > 0)) or ((row == 9) and (col > 0)):
-            return (self.representation[(row-1,col-1)], "")
+            return (self.get_value(row-1,col-1), "")
         elif (((col==9) and (row == 0)) or ((col == 0) and (row == 9))):
             return ("","")
-        return(self.representation[(row-1, col-1)], self.representation[(row+1,col+1)])
+        return(self.get_value(row-1, col-1), self.get_value(row+1,col+1))
 
     def adjacent_diagonal_downup_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores na diagonal de baixo para cima, da esquerda para a direita,
         respectivamente."""
         # TODO
         if ((col == 0) and (row > 0)) or ((row == 9) and (col < 9)): #n verifica se a linha ou coluna é u  valor negativo ou maior que 9, precisamos dessa verificação?
-            return ("", self.representation[(row-1,col+1)])
+            return ("", self.get_value(row-1,col+1))
         elif ((col == 9) and (row < 9)) or ((row == 0) and (col > 0)):
-            return (self.representation[(row+1,col-1)], "")
+            return (self.get_value(row+1,col-1), "")
         elif (((col==9) and (row == 9)) or ((col == 0) and (row == 0))):
             return ("","")
-        return(self.representation[(row+1, col-1)], self.representation[(row-1,col+1)])
+        return(self.get_value(row+1, col-1), self.get_value(row-1,col+1))
 
     @staticmethod
     def parse_instance():
@@ -749,6 +814,7 @@ class Board:
         lines_capacity = lines.copy()
         cols_capacity = cols.copy()
         hints = []
+        boats_left=[1,1,1,1,2,2,2,3,3,4]
         n_hints = int(stdin.readline())
         representation = np.chararray((10,10), unicode=True)
         representation[:] = "_"
@@ -756,8 +822,11 @@ class Board:
             lista = stdin.readline().split()
             hints.append(lista)
             representation[(int(lista[1]), int(lista[2]))] = lista[3]
-        
-        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation)
+            if(lista[3]=="C"):
+                lines_capacity[int(lista[1])]-=1
+                cols_capacity[int(lista[2])]-=1
+                boats_left.remove(1)
+        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left)
         return new_board
 
 
