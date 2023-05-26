@@ -5,7 +5,7 @@
 # Grupo 44:
 # 102908 Luana Ferraz
 # 103555 Ricardo Pereira 
-#import time
+import time
 import sys
 import numpy as np
 import copy
@@ -627,30 +627,24 @@ class BimaruState:
     def add_boat_4(self, pos_init: list, pos_end: list):
         # mesma linha
         if(pos_init[0]-pos_end[0] == 0):
-            if(self.board.get_value(pos_init[0], pos_init[1])!="L"): 
-                self.board.representation[pos_init[0], pos_init[1]] = "l"
+            self.board.representation[pos_init[0], pos_init[1]] = "l"
             self.board.update_capacities(pos_init[0], pos_init[1])
             for i in range(1,3):
-                if(self.board.get_value(pos_init[0], pos_init[1]+i)!="M"): 
-                    self.board.representation[pos_init[0], pos_init[1]+i] = "m"
+                self.board.representation[pos_init[0], pos_init[1]+i] = "m"
                 self.board.update_capacities(pos_init[0], pos_init[1]+i)
-            if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
-                self.board.representation[pos_end[0], pos_end[1]] = "r"
+            self.board.representation[pos_end[0], pos_end[1]] = "r"
             self.board.update_capacities(pos_end[0], pos_end[1])
             self.fill_left(pos_init[0], pos_init[1])
             self.fill_right(pos_end[0], pos_end[1])            
 
         # mesma coluna
         elif(pos_init[1]-pos_end[1] == 0):
-            if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
-                self.board.representation[pos_init[0], pos_init[1]] = "t"
+            self.board.representation[pos_init[0], pos_init[1]] = "t"
             self.board.update_capacities(pos_init[0], pos_init[1])
             for i in range(1,3):
-                if(self.board.get_value(pos_init[0]+i, pos_init[1])!="M"): 
-                    self.board.representation[pos_init[0]+i, pos_init[1]] = "m"
+                self.board.representation[pos_init[0]+i, pos_init[1]] = "m"
                 self.board.update_capacities(pos_init[0]+i, pos_init[1])
-            if(self.board.get_value(pos_end[0], pos_end[1])!="B"): 
-                self.board.representation[pos_end[0], pos_end[1]] = "b"
+            self.board.representation[pos_end[0], pos_end[1]] = "b"
             self.board.update_capacities(pos_end[0], pos_end[1])
             self.fill_top(pos_init[0], pos_init[1])
             self.fill_bottom(pos_end[0], pos_end[1])          
@@ -660,14 +654,11 @@ class BimaruState:
     
     def add_boat_3(self, pos_init: list, pos_end: list):
         if(pos_init[0]-pos_end[0] == 0):
-            if(self.board.get_value(pos_init[0], pos_init[1])!="L"):
-                self.board.representation[pos_init[0], pos_init[1]] = "l"
+            self.board.representation[pos_init[0], pos_init[1]] = "l"
             self.board.update_capacities(pos_init[0], pos_init[1])
-            if(self.board.get_value(pos_init[0], pos_init[1]+1)!="M"):
-                self.board.representation[pos_init[0], pos_init[1]+1] = "m"
+            self.board.representation[pos_init[0], pos_init[1]+1] = "m"
             self.board.update_capacities(pos_init[0], pos_init[1]+1)
-            if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
-                self.board.representation[pos_end[0], pos_end[1]] = "r"
+            self.board.representation[pos_end[0], pos_end[1]] = "r"
             self.board.update_capacities(pos_end[0], pos_end[1])
             self.fill_left(pos_init[0], pos_init[1])
             self.fill_right(pos_end[0], pos_end[1]) 
@@ -675,14 +666,11 @@ class BimaruState:
 
         # mesma coluna
         elif(pos_init[1]-pos_end[1] == 0):
-            if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
-                self.board.representation[pos_init[0], pos_init[1]] = "t"
+            self.board.representation[pos_init[0], pos_init[1]] = "t"
             self.board.update_capacities(pos_init[0], pos_init[1])
-            if(self.board.get_value(pos_init[0]+1, pos_init[1])!="M"): 
-                self.board.representation[pos_init[0]+1, pos_init[1]] = "m"
+            self.board.representation[pos_init[0]+1, pos_init[1]] = "m"
             self.board.update_capacities(pos_init[0]+1, pos_init[1])
-            if(self.board.get_value(pos_end[0], pos_end[1])!="B"): 
-                self.board.representation[pos_end[0], pos_end[1]] = "b"
+            self.board.representation[pos_end[0], pos_end[1]] = "b"
             self.board.update_capacities(pos_end[0], pos_end[1])
             self.fill_top(pos_init[0], pos_init[1])
             self.fill_bottom(pos_end[0], pos_end[1]) 
@@ -694,12 +682,10 @@ class BimaruState:
     def add_boat_2(self, pos_init: list, pos_end: list):
             
         if(pos_init[0]-pos_end[0] == 0):
-            if(self.board.get_value(pos_init[0], pos_init[1])!="L"):
-                self.board.representation[pos_init[0], pos_init[1]] = "l"
+            self.board.representation[pos_init[0], pos_init[1]] = "l"
             self.board.update_capacities(pos_init[0], pos_init[1])
             
-            if(self.board.get_value(pos_end[0], pos_end[1])!="R"): 
-                self.board.representation[pos_init[0], pos_end[1]] = "r"
+            self.board.representation[pos_init[0], pos_end[1]] = "r"
             self.board.update_capacities(pos_init[0], pos_end[1])
             self.fill_left(pos_init[0], pos_init[1])
             if(pos_end[1]<9 and self.board.get_value(pos_end[0], pos_end[1]+1)!= "W"):
@@ -708,12 +694,10 @@ class BimaruState:
 
         # mesma coluna
         elif(pos_init[1]-pos_end[1] == 0):
-            if(self.board.get_value(pos_init[0], pos_init[1])!="T"): 
-                self.board.representation[pos_init[0], pos_init[1]] = "t"
+            self.board.representation[pos_init[0], pos_init[1]] = "t"
             self.board.update_capacities(pos_init[0], pos_init[1])
             
-            if(self.board.get_value(pos_end[0], pos_end[1])!="B"): 
-                self.board.representation[pos_end[0], pos_end[1]] = "b"
+            self.board.representation[pos_end[0], pos_end[1]] = "b"
             self.board.update_capacities(pos_end[0], pos_end[1]) 
             self.fill_top(pos_init[0], pos_init[1])
             if(pos_end[0]<9 and self.board.get_value(pos_end[0]+1, pos_end[1])!= "W"):
@@ -732,7 +716,7 @@ class BimaruState:
 class Board:
     """Representação interna de um tabuleiro de Bimaru."""
 
-    def __init__(self, lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left):
+    def __init__(self, lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left, copy_hints):
         self.representation = representation
         self.lines = lines
         self.cols = cols
@@ -740,6 +724,7 @@ class Board:
         self.cols_capacity = cols_capacity     
         self.hints = hints
         self.boats_left= boats_left
+        self.copy_hints = copy_hints
 
     def update_capacities(self, row: int, col: int):
         self.lines_capacity[row]-= 1
@@ -795,8 +780,8 @@ class Board:
         return(self.get_value(row+1, col-1), self.get_value(row-1,col+1))
     
     def print_solution(self):
-        for i in self.hints:
-            self.representation[int(i[1]), int(i[2])] = "W"
+        for i in self.copy_hints:
+            self.representation[int(i[1]), int(i[2])] = i[3]
         for line in range(10):
             for col in range(10):
                 value = self.representation[line, col]
@@ -836,7 +821,8 @@ class Board:
                 lines_capacity[int(lista[1])]-=1
                 cols_capacity[int(lista[2])]-=1
                 boats_left.remove(1)
-        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left)
+        copy_hints = hints.copy()
+        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left, copy_hints)
         return new_board
 
 
@@ -1021,7 +1007,7 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    #start = time.time()
+    start = time.time()
     board = Board.parse_instance()
 
     problem = Bimaru(board)
@@ -1033,8 +1019,8 @@ if __name__ == "__main__":
     #goal_node = greedy_search(problem)
 
     goal_node.state.board.print_solution()
-    #end = time.time()
-    #print(end-start)
+    end = time.time()
+    print(end-start)
     # Mostrar valor na posição (3, 3):
 
 
