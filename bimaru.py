@@ -1,7 +1,7 @@
 # bimaru.py: Template para implementação do projeto de Inteligência Artificial 2022/2023.
 # Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
-
+# bimaru quem perde leva no cu
 # Grupo 44:
 # 102908 Luana Ferraz
 # 103555 Ricardo Pereira 
@@ -387,19 +387,33 @@ class BimaruState:
                     if(value== "_"):
                         if(self.is_free_around(l, col)):
                             boats_to_add += [["one", [l, col]]]
-                     
 
-        for c in range(10):
-            if(self.board.cols_capacity[c]>=2):
-                for line in range(9):
-                    if(self.board.lines_capacity[line]<1):
-                        continue
-                    value = self.board.get_value(line, c)
-                    if(value == "_"):
-                        if(self.is_free_around(line, c)):
-                            boats_to_add += [["one", [line, c]]]
-                      
+        return boats_to_add
 
+    def check_boats2(self):
+        boats_to_add = []
+        for row in range(10):
+            for col in range(10):
+                value=self.board.get_value(row, col)
+                count2=0
+                if(value in ["L","_"] and self.board.cols_capacity[col]>=1):
+                    if(self.board.lines_capacity[row]>=2 and col < 9 and self.board.get_value(row, col+1) in ["R", "_"]):
+                        if(self.board.cols_capacity[col+1]>=1):
+                            count2=2
+
+                        if(count2==2):
+                            if(self.is_free_horizontal(row, col, row, col+1)):
+                                boats_to_add += [["two", [row, col], [row, col+1]]]
+                    
+                count2=0
+                if(value in ["T", "_"] and self.board.lines_capacity[row]>=1):
+                    if(self.board.cols_capacity[col]>=2 and row < 9 and self.board.get_value(row+1, col) in ["B", "_"]):
+                        if(self.board.lines_capacity[row+1]>=1):
+                            count2=2
+
+                        if(count2==2):
+                            if(self.is_free_vertical(row, col, row+1, col)):
+                                boats_to_add += [["two", [row, col], [row+1, col]]]         
         return boats_to_add
 
     def check_boat_2(self):
@@ -410,7 +424,7 @@ class BimaruState:
                     if(self.board.cols_capacity[col]<1):
                         continue
                     value = self.board.get_value(l, col)
-                    if(value== "_" or value=="L" or value == "l"):
+                    if(value== "_" or value=="L"):
                         count=0
                         for i in range(2):
                             if(self.board.cols_capacity[col+i]<1):
@@ -418,12 +432,12 @@ class BimaruState:
                             value=self.board.get_value(l, col+i)
                             if(value=="_"): 
                                 count +=1
-                            elif(value=="r" or value=="R"):
+                            elif(value=="R"):
                                 if(i!=1):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="l" or value=="L"):
+                            elif(value=="L"):
                                 if(i!=0):
                                     break
                                 else: 
@@ -442,7 +456,7 @@ class BimaruState:
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    if(value== "_" or value=="t" or value == "T"):
+                    if(value== "_" or value == "T"):
                         count=0
                         for i in range(2):
                             if(self.board.lines_capacity[line+i]<1):
@@ -450,12 +464,12 @@ class BimaruState:
                             value=self.board.get_value(line+i, c)
                             if(value=="_"): 
                                 count +=1
-                            elif(value=="b" or value=="B"):
+                            elif(value=="B"):
                                 if(i!=1):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="t" or value=="T"):
+                            elif(value=="T"):
                                 if(i!=0):
                                     break
                                 else: 
@@ -470,6 +484,39 @@ class BimaruState:
 
         return boats_to_add
 
+    def check_boats3(self):
+        boats_to_add = []
+        for row in range(10):
+            for col in range(10):
+                value=self.board.get_value(row, col)
+                if(value in ["L","_"] and self.board.cols_capacity[col]>=1):
+                    count3 = 1
+                    if(self.board.lines_capacity[row]>=3 and col < 8 and self.board.get_value(row, col+2) in ["R", "_"]):
+                        if(self.board.cols_capacity[col+2]>=1):count3+=1
+                        if(self.board.cols_capacity[col+1]>=1): 
+                            value=self.board.get_value(row, col+1)
+                            if(value=="_" or value=="M"): 
+                                count3 += 1
+                    
+                   
+                        if(count3==3):
+                            if(self.is_free_horizontal(row, col, row, col+2)):
+                                boats_to_add += [["three", [row, col], [row, col+2]]]
+                    
+                if(value in ["T", "_"] and self.board.lines_capacity[row]>=1):
+                    count3 = 1
+                    if(self.board.cols_capacity[col]>=3 and row < 8 and self.board.get_value(row+2, col) in ["B", "_"]):
+                        if(self.board.lines_capacity[row+2]>=1):count3+=1
+                        if(self.board.lines_capacity[row+1]>=1): 
+                            value=self.board.get_value(row+1, col)
+                            if(value=="_" or value=="M"): 
+                                count3 += 1
+                   
+                        if(count3==3):
+                            if(self.is_free_vertical(row, col, row+2, col)):
+                                boats_to_add += [["three", [row, col], [row+2, col]]]      
+        return boats_to_add
+
     def check_boat_3(self):
         boats_to_add = []
         for l in range(10):
@@ -478,7 +525,7 @@ class BimaruState:
                     if(self.board.cols_capacity[col]<1):
                         continue
                     value = self.board.get_value(l, col)
-                    if(value== "_" or value=="L" or value == "l"):
+                    if(value== "_" or value=="L"):
                         count=0
                         for i in range(3):
                             if(self.board.cols_capacity[col+i]<1):
@@ -486,17 +533,17 @@ class BimaruState:
                             value=self.board.get_value(l, col+i)
                             if(value=="_"): 
                                 count +=1
-                            elif(value=="r" or value=="R"):
+                            elif(value=="R"):
                                 if(i!=2):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="l" or value=="L"):
+                            elif(value=="L"):
                                 if(i!=0):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="m" or value=="M"): 
+                            elif(value=="M"): 
                                 if(i==1): 
                                     count+=1
                                 else: 
@@ -516,7 +563,7 @@ class BimaruState:
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    if(value== "_" or value=="t" or value == "T"):
+                    if(value== "_" or value == "T"):
                         count=0
                         for i in range(3):
                             if(self.board.lines_capacity[line+i]<1):
@@ -524,17 +571,17 @@ class BimaruState:
                             value=self.board.get_value(line+i, c)
                             if(value=="_"): 
                                 count +=1
-                            elif(value=="b" or value=="B"):
+                            elif(value=="B"):
                                 if(i!=2):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="t" or value=="T"):
+                            elif( value=="T"):
                                 if(i!=0):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="m" or value=="M"): 
+                            elif(value=="M"): 
                                 if(i==1): 
                                     count+=1
                                 else: 
@@ -548,6 +595,46 @@ class BimaruState:
 
         return boats_to_add
 
+    def check_boats4(self):
+        boats_to_add = []
+        for row in range(10):
+            for col in range(10):
+                value=self.board.get_value(row, col)
+                if(value in ["L","_"] and self.board.cols_capacity[col]>=1):
+                    count4 = 1
+                    if(self.board.lines_capacity[row]>=4 and col < 7 and self.board.get_value(row, col+3) in ["R","_"]): # se nao estiver bem a ultima posicao nao vale a pena testar os barcos de 2,3 e 4
+                        if(self.board.cols_capacity[col+3]>=1):count4+=1
+                        for i in range(1,3):
+                            if(self.board.cols_capacity[col+i]<1):
+                                break
+                            value=self.board.get_value(row, col+i)
+                            if(value=="_" or value=="M"): 
+                                count4 += 1
+
+
+                        if(count4==4):
+                                if(self.is_free_horizontal(row, col, row, col+3)):
+                                    boats_to_add += [["four", [row, col], [row, col+3]]]
+                        
+                    
+                if(value in ["T", "_"] and self.board.lines_capacity[row]>=1):
+                    count4 = 1
+                    if(self.board.cols_capacity[col]>=4 and row < 7 and self.board.get_value(row+3, col) in ["B","_"]): # se nao estiver bem a ultima posicao nao vale a pena testar os barcos de 2,3 e 4
+                        if(self.board.lines_capacity[row+3]>=1):
+                            count4+=1
+                        for i in range(1,3):
+                            if(self.board.lines_capacity[row+i]<1):
+                                break
+                            value=self.board.get_value(row+i, col)
+                            if(value=="_" or value=="M"): 
+                                count4 += 1
+
+
+                        if(count4==4):
+                                if(self.is_free_vertical(row, col, row+3, col)):
+                                    boats_to_add += [["four", [row, col], [row+3, col]]]       
+        return boats_to_add 
+
     def check_boat_4(self):
         boats_to_add = []
         for l in range(10):
@@ -556,7 +643,7 @@ class BimaruState:
                     if(self.board.cols_capacity[col]<1):
                         continue
                     value = self.board.get_value(l, col)
-                    if(value== "_" or value=="L" or value == "l"):
+                    if(value== "_" or value=="L"):
                         count=0
                         for i in range(3,-1,-1):
                             if(self.board.cols_capacity[col+i]<1):
@@ -564,17 +651,17 @@ class BimaruState:
                             value=self.board.get_value(l, col+i)
                             if(value=="_"): 
                                 count +=1
-                            elif(value=="r" or value=="R"):
+                            elif( value=="R"):
                                 if(i!=3):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="l" or value=="L"):
+                            elif( value=="L"):
                                 if(i!=0):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="m" or value=="M"): 
+                            elif(value=="M"): 
                                 if(i==1 or i==2): 
                                     count+=1
                                 else: 
@@ -592,7 +679,7 @@ class BimaruState:
                     if(self.board.lines_capacity[line]<1):
                         continue
                     value = self.board.get_value(line, c)
-                    if(value== "_" or value=="t" or value == "T"):
+                    if(value== "_" or value == "T"):
                         count=0
                         for i in range(3,-1,-1):
                             if(self.board.lines_capacity[line+i]<1):
@@ -600,17 +687,17 @@ class BimaruState:
                             value=self.board.get_value(line+i, c)
                             if(value=="_"): 
                                 count +=1
-                            elif(value=="b" or value=="B"):
+                            elif(value=="B"):
                                 if(i!=3):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="t" or value=="T"):
+                            elif( value=="T"):
                                 if(i!=0):
                                     break
                                 else: 
                                     count +=1
-                            elif(value=="m" or value=="M"): 
+                            elif(value=="M"): 
                                 if(i==1 or i==2): 
                                     count+=1
                                 else: 
@@ -891,10 +978,10 @@ class Bimaru(Problem):
             lista+=state.check_boat_4()
             return lista
         if(3 in state.board.boats_left):
-            lista+=state.check_boat_3()
+            lista+=state.check_boats3()
             return lista
         if(2 in state.board.boats_left):
-            lista+=state.check_boat_2()
+            lista+=state.check_boats2()
             return lista
         if(1 in state.board.boats_left):
             lista+=state.check_boat_1()
@@ -959,7 +1046,17 @@ class Bimaru(Problem):
         for i in state.board.cols_capacity:
             if i not in (-1, 0):
                 return False
-        boats = [1,1,1,1,2,2,2,3,3,4]
+            
+        for hint in state.board.copy_hints:
+            if(hint[3]=="T" and state.board.get_value(int(hint[1])+1, int(hint[2])) not in ("b", "m")):
+                return False
+            if(hint[3]=="B" and state.board.get_value(int(hint[1])-1, int(hint[2])) not in ("t", "m")):
+                return False
+            if(hint[3]=="L" and state.board.get_value(int(hint[1]), int(hint[2])+1) not in ("r", "m")):
+                return False
+            if(hint[3]=="R" and state.board.get_value(int(hint[1]), int(hint[2])-1) not in ("l", "m")):
+                return False
+        """boats = [1,1,1,1,2,2,2,3,3,4]
         for line in range(10):
             for col in range(10):
                 value = state.board.representation[line, col]
@@ -1003,7 +1100,7 @@ class Bimaru(Problem):
                     if state.board.representation[line-1, col] not in ("M", "m", "T", "t"):
                         return False
         if boats != []:
-            return False
+            return False"""
         return True
 
     def h(self, node: Node):
