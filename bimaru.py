@@ -1,7 +1,6 @@
 # bimaru.py: Template para implementação do projeto de Inteligência Artificial 2022/2023.
 # Devem alterar as classes e funções neste ficheiro de acordo com as instruções do enunciado.
 # Além das funções e classes já definidas, podem acrescentar outras que considerem pertinentes.
-# bimaru quem perde leva no cu
 # Grupo 44:
 # 102908 Luana Ferraz
 # 103555 Ricardo Pereira 
