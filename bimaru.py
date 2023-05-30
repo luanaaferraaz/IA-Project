@@ -975,7 +975,7 @@ class Bimaru(Problem):
     
         
         if(4 in state.board.boats_left):
-            lista+=state.check_boat_4()
+            lista+=state.check_boats4()
             lista.reverse()
             return lista
         if(3 in state.board.boats_left):
@@ -1036,7 +1036,7 @@ class Bimaru(Problem):
         Todos os barcos postos
         (n ha barcos colados
         """
-        print(state.board.representation, "\n")
+        #print(state.board.representation, "\n")
 
         """if np.any(state.board.representation == "_"):
             return False"""
@@ -1049,7 +1049,7 @@ class Bimaru(Problem):
                 return False
         
         for hint in state.board.copy_hints:
-            print(hint[3])
+            #print(hint[3])
             if(hint[3]=="T" and state.board.get_value(int(hint[1])+1, int(hint[2])) not in ("b", "m")):
                 return False
             if(hint[3]=="B" and state.board.get_value(int(hint[1])-1, int(hint[2])) not in ("t", "m")):
@@ -1059,12 +1059,14 @@ class Bimaru(Problem):
             if(hint[3]=="R" and state.board.get_value(int(hint[1]), int(hint[2])-1) not in ("l", "m")):
                 return False
             if(hint[3]=="M"):
-                right = state.board.get_value(int(hint[1]), int(hint[2])-1) 
-                left = state.board.get_value(int(hint[1]), int(hint[2])+1)
-                top = state.board.get_value(int(hint[1])-1, int(hint[2]))
-                bottom = state.board.get_value(int(hint[1])+1, int(hint[2]))
-                if(right not in ["l", "m"] and left not in ["r", "m"]):
-                    if(top not in ("b", "m") and bottom not in ("t", "m")):
+                left, right, top, bottom = "?", "?", "?", "?"
+                
+                if(int(hint[2])>0): left = state.board.get_value(int(hint[1]), int(hint[2])-1) 
+                if(int(hint[2])<9): right = state.board.get_value(int(hint[1]), int(hint[2])+1)
+                if(int(hint[1])>0): top = state.board.get_value(int(hint[1])-1, int(hint[2]))
+                if(int(hint[1])<9):bottom = state.board.get_value(int(hint[1])+1, int(hint[2]))
+                if(left not in ["l", "m", "?"] and right not in ["r", "m", "?"]):
+                    if(bottom not in ("b", "m", "?") and top not in ("t", "m", "?")):
                         return False
 
         """boats = [1,1,1,1,2,2,2,3,3,4]
