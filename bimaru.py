@@ -4,8 +4,7 @@
 
 # Grupo 44:
 # 102908 Luana Ferraz
-# 103555 Ricardo Pereira 
-#import time
+# 103555 Ricardo Pereira
 import sys
 import numpy as np
 import copy
@@ -17,6 +16,7 @@ from search import (
     depth_first_tree_search,
     greedy_search,
     recursive_best_first_search,
+    iterative_deepening_search,
 )
 
 
@@ -31,7 +31,6 @@ class BimaruState:
     def __lt__(self, other):
         return self.id < other.id
 
-    # TODO: outros metodos da classe
     def fill_row(self, row: int):
         for i in range(10):
             if self.board.representation[(row, i)] == "_":
@@ -43,9 +42,7 @@ class BimaruState:
             if(self.board.representation[(i, col)] == "_"):
                 self.board.representation[(i, col)] = "w"
         pass
-    
-    # !!! qnd fazemos tipo adicionar um b temos que no lines_capacity e cols_capacity atualizar
-    # ja esta feito mas se encontrares algum sitio que falte mete pls
+ 
     def fill_top(self, row, col):
         if(col==0):
             self.board.representation[row, col+1] = "w"
@@ -204,7 +201,7 @@ class BimaruState:
             elif(row==9):
                 self.board.representation[row, col+1] = "w"
                 self.board.representation[row-1, col] = "w"
-                self.board.representation[row-1, col-1] = "w"
+                self.board.representation[row-1, col+1] = "w"
             else:
                 self.board.representation[row, col+1] = "w"
                 self.board.representation[row+1, col] = "w"
@@ -320,22 +317,6 @@ class BimaruState:
                     self.board.representation[row, col-1] = "w"
                     self.board.representation[row-1, col-1] = "w"
 
-    def fill_row_line(self, row, col, row_end, col_end, size):
-        if(row==row_end):
-            i=0
-            while(i<size):
-                if(self.board.cols_capacity[col+i]<=0): self.fill_col(col+i)
-                i+=1
-            if(self.board.lines_capacity[row]<=0): self.fill_row(row)
-
-        # mesma coluna
-        elif(col==col_end):
-            i=0
-            while(i<size):
-                if(self.board.lines_capacity[row+i]<=0): self.fill_row(row+i)
-                i+=1
-            if(self.board.cols_capacity[col]<=0): self.fill_col(col)
-
     def is_free_around(self, row, col):
         (up, down) = self.board.adjacent_vertical_values(row, col)
         if(up not in ("W", "w", "", "_") or down not in ("W", "w", "", "_")):
@@ -424,7 +405,10 @@ class BimaruState:
 
     def check_boats2(self):
         boats_to_add = []
-        for row in range(10):
+        start_row = 0
+        if(self.board.last_two[0][0]!=-1):
+            start_row = self.board.last_two[0][0]
+        for row in range(start_row, 10):
             for col in range(10):
                 value=self.board.get_value(row, col)
                 count2=0
@@ -445,13 +429,16 @@ class BimaruState:
 
                         if(count2==2):
                             if(self.is_free_vertical(row, col, row+1, col)):
-                                boats_to_add += [["two", [row, col], [row+1, col]]]         
+                                boats_to_add += [["two", [row, col], [row+1, col]]]      
         return boats_to_add
 
 
     def check_boats3(self):
         boats_to_add = []
-        for row in range(10):
+        start_row = 0
+        if(self.board.last_three[0][0]!=-1):
+            start_row = self.board.last_three[0][0]
+        for row in range(start_row, 10):            
             for col in range(10):
                 value=self.board.get_value(row, col)
                 if(value in ["L","_"] and self.board.cols_capacity[col]>=1):
@@ -479,7 +466,7 @@ class BimaruState:
                    
                         if(count3==3):
                             if(self.is_free_vertical(row, col, row+2, col)):
-                                boats_to_add += [["three", [row, col], [row+2, col]]]      
+                                boats_to_add += [["three", [row, col], [row+2, col]]]   
         return boats_to_add
 
     def check_boats4(self):
@@ -489,7 +476,7 @@ class BimaruState:
                 value=self.board.get_value(row, col)
                 if(value in ["L","_"] and self.board.cols_capacity[col]>=1):
                     count4 = 1
-                    if(self.board.lines_capacity[row]>=4 and col < 7 and self.board.get_value(row, col+3) in ["R","_"]): # se nao estiver bem a ultima posicao nao vale a pena testar os barcos de 2,3 e 4
+                    if(self.board.lines_capacity[row]>=4 and col < 7 and self.board.get_value(row, col+3) in ["R","_"]):  
                         if(self.board.cols_capacity[col+3]>=1):count4+=1
                         for i in range(1,3):
                             if(self.board.cols_capacity[col+i]<1):
@@ -506,7 +493,7 @@ class BimaruState:
                     
                 if(value in ["T", "_"] and self.board.lines_capacity[row]>=1):
                     count4 = 1
-                    if(self.board.cols_capacity[col]>=4 and row < 7 and self.board.get_value(row+3, col) in ["B","_"]): # se nao estiver bem a ultima posicao nao vale a pena testar os barcos de 2,3 e 4
+                    if(self.board.cols_capacity[col]>=4 and row < 7 and self.board.get_value(row+3, col) in ["B","_"]):
                         if(self.board.lines_capacity[row+3]>=1):
                             count4+=1
                         for i in range(1,3):
@@ -519,7 +506,7 @@ class BimaruState:
 
                         if(count4==4):
                                 if(self.is_free_vertical(row, col, row+3, col)):
-                                    boats_to_add += [["four", [row, col], [row+3, col]]]       
+                                    boats_to_add += [["four", [row, col], [row+3, col]]]    
         return boats_to_add 
 
     def add_boat_4(self, pos_init: list, pos_end: list):
@@ -546,7 +533,7 @@ class BimaruState:
             self.board.update_capacities(pos_end[0], pos_end[1])
             self.fill_top(pos_init[0], pos_init[1])
             self.fill_bottom(pos_end[0], pos_end[1])          
-        self.board.boats_left.remove(4)
+        self.board.boats_left4-=1
 
         pass
     
@@ -573,7 +560,7 @@ class BimaruState:
             self.fill_top(pos_init[0], pos_init[1])
             self.fill_bottom(pos_end[0], pos_end[1]) 
 
-        self.board.boats_left.remove(3)
+        self.board.boats_left3-=1
 
         pass
 
@@ -600,14 +587,14 @@ class BimaruState:
             self.fill_top(pos_init[0], pos_init[1])
             if(pos_end[0]<9 and self.board.get_value(pos_end[0]+1, pos_end[1])!= "W"):
                 self.board.representation[pos_end[0]+1, pos_end[1]]= "w"
-        self.board.boats_left.remove(2)
+        self.board.boats_left2-=1
 
         pass
 
     def add_boat_1(self, pos_init: list):
         self.board.representation[pos_init[0], pos_init[1]] = "c"
         self.fill_around(pos_init[0], pos_init[1])
-        self.board.boats_left.remove(1)
+        self.board.boats_left1-=1
         self.board.update_capacities(pos_init[0], pos_init[1])
         pass
 
@@ -621,8 +608,13 @@ class Board:
         self.lines_capacity = lines_capacity
         self.cols_capacity = cols_capacity     
         self.hints = hints
-        self.boats_left= boats_left
+        self.boats_left4 = 1
+        self.boats_left3 = 2
+        self.boats_left2 = 3
+        self.boats_left1 = boats_left
         self.copy_hints = copy_hints
+        self.last_two = ([-1,-1],[-1,-1])
+        self.last_three = ([-1,-1],[-1,-1])
 
     def update_capacities(self, row: int, col: int):
         self.lines_capacity[row]-= 1
@@ -630,13 +622,11 @@ class Board:
 
     def get_value(self, row: int, col: int) -> str:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        # TODO
         return self.representation[(row, col)]
 
     def adjacent_vertical_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente acima e abaixo,
         respectivamente."""
-        # TODO
         if (row == 0):
             return ("", self.get_value(row+1,col))
         elif (row >= 9):
@@ -646,7 +636,6 @@ class Board:
     def adjacent_horizontal_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        # TODO
         if (col == 0):
             return ("", self.get_value(row,col+1))
         elif (col >= 9):
@@ -656,8 +645,7 @@ class Board:
     def adjacent_diagonal_updown_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores na diagonal de cima para baixo da esquerda para a direita,
         respectivamente."""
-        # TODO
-        if ((col == 0) and (row < 9)) or ((row == 0) and (col < 9)): #n verifica se a linha ou coluna é u  valor negativo ou maior que 9, precisamos dessa verificação?
+        if ((col == 0) and (row < 9)) or ((row == 0) and (col < 9)): 
             return ("", self.get_value(row+1,col+1))
         elif ((col == 9) and (row > 0)) or ((row == 9) and (col > 0)):
             return (self.get_value(row-1,col-1), "")
@@ -668,8 +656,7 @@ class Board:
     def adjacent_diagonal_downup_values(self, row: int, col: int) -> (str, str):
         """Devolve os valores na diagonal de baixo para cima, da esquerda para a direita,
         respectivamente."""
-        # TODO
-        if ((col == 0) and (row > 0)) or ((row == 9) and (col < 9)): #n verifica se a linha ou coluna é u  valor negativo ou maior que 9, precisamos dessa verificação?
+        if ((col == 0) and (row > 0)) or ((row == 9) and (col < 9)): 
             return ("", self.get_value(row-1,col+1))
         elif ((col == 9) and (row < 9)) or ((row == 0) and (col > 0)):
             return (self.get_value(row+1,col-1), "")
@@ -700,14 +687,13 @@ class Board:
             > from sys import stdin
             > line = stdin.readline().split()
         """
-        # TODO
         from sys import stdin
         lines = [int(x) for x in stdin.readline().split()[1:]]
         cols = [int(x) for x in stdin.readline().split()[1:]]
         lines_capacity = lines.copy()
         cols_capacity = cols.copy()
         hints = []
-        boats_left=[1,1,1,1,2,2,2,3,3,4]
+        boats_left1=4
         n_hints = int(stdin.readline())
         representation = np.chararray((10,10), unicode=True)
         representation[:] = "_"
@@ -718,9 +704,9 @@ class Board:
             if(lista[3]=="C"):
                 lines_capacity[int(lista[1])]-=1
                 cols_capacity[int(lista[2])]-=1
-                boats_left.remove(1)
+                boats_left1-=1
         copy_hints = hints.copy()
-        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left, copy_hints)
+        new_board = Board(lines, cols, lines_capacity, cols_capacity, hints, representation, boats_left1, copy_hints)
         
         for row in range(len(new_board.lines_capacity)):
             if (new_board.lines_capacity[row] == 0):
@@ -736,26 +722,18 @@ class Board:
                     if(new_board.representation[(line, col)] == "_"):
                         new_board.representation[(line, col)] = "w"        
         
-        
         return new_board
-
-
-
-    # TODO: outros metodos da classe
 
 
 class Bimaru(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        #self.initial = board
         self.initial = BimaruState(board)
-        # TODO
         pass
 
     def actions(self, state: BimaruState):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
-        # TODO
         lista = []
         for i in range(len(state.board.hints)-1, -1, -1):
 
@@ -784,18 +762,17 @@ class Bimaru(Problem):
                 state.board.hints.pop(i)
                 return lista
     
-        
-        if(4 in state.board.boats_left):
+        if(state.board.boats_left4!=0):
             lista+=state.check_boats4()
-            
             return lista
-        if(3 in state.board.boats_left):
+        if(state.board.boats_left3!=0):
             lista+=state.check_boats3()
             return lista
-        if(2 in state.board.boats_left):
-            lista+=state.check_boats2()
+        if(state.board.boats_left2!=0):
+            lista+=state.check_boats2() 
+            lista.reverse() 
             return lista
-        if(1 in state.board.boats_left):
+        if(state.board.boats_left1!=0):
             lista+=state.check_boat_1()
             return lista
         
@@ -807,19 +784,20 @@ class Bimaru(Problem):
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        # TODO
         state_new = BimaruState(copy.deepcopy(state.board))
         
-        if(action[0] == "four" and 4 in state_new.board.boats_left):
+        if(action[0] == "four" and state_new.board.boats_left4!=0):
             state_new.add_boat_4(action[1], action[2])
             state_new.fill_row_line(action[1][0], action[1][1], action[2][0], action[2][1],4)
-        elif(action[0] == "three" and 3 in state_new.board.boats_left):
+        elif(action[0] == "three" and state_new.board.boats_left3!=0):
             state_new.add_boat_3(action[1], action[2])  
             state_new.fill_row_line(action[1][0], action[1][1], action[2][0], action[2][1],3)
-        elif(action[0] == "two" and 2 in state_new.board.boats_left):
+            state_new.board.last_three = (action[1], action[2])        
+        elif(action[0] == "two" and state_new.board.boats_left2!=0):
             state_new.add_boat_2(action[1], action[2])
             state_new.fill_row_line(action[1][0], action[1][1], action[2][0], action[2][1],2)
-        elif(action[0] == "one" and 1 in state_new.board.boats_left):
+            state_new.board.last_two = (action[1], action[2])
+        elif(action[0] == "one" and state_new.board.boats_left1!=0):
             state_new.add_boat_1(action[1])
             state_new.fill_row_line(action[1][0], action[1][1], action[1][0], action[1][1],1)
         elif (action[0] == "fill lines"):
@@ -845,26 +823,18 @@ class Bimaru(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas de acordo com as regras do problema."""
-        """
-        Todo preenchido #
-        Todas as capacidades #
-        Todos os barcos postos
-        (n ha barcos colados
-        """
-        #print(state.board.representation, "\n")
 
-        """if np.any(state.board.representation == "_"):
-            return False"""
+        if(state.board.boats_left1!=0 or state.board.boats_left2!=0 or state.board.boats_left3!=0 or state.board.boats_left4!=0):
+            return False
+
         for i in state.board.lines_capacity:
-            if i not in (-1, 0):
-                
+            if i not in (-1, 0):         
                 return False
         for i in state.board.cols_capacity:
             if i not in (-1, 0):
                 return False
         
         for hint in state.board.copy_hints:
-            #print(hint[3])
             if(hint[3]=="T" and state.board.get_value(int(hint[1])+1, int(hint[2])) not in ("b", "m")):
                 return False
             if(hint[3]=="B" and state.board.get_value(int(hint[1])-1, int(hint[2])) not in ("t", "m")):
@@ -875,7 +845,6 @@ class Bimaru(Problem):
                 return False
             if(hint[3]=="M"):
                 left, right, top, bottom = "?", "?", "?", "?"
-                
                 if(int(hint[2])>0): left = state.board.get_value(int(hint[1]), int(hint[2])-1) 
                 if(int(hint[2])<9): right = state.board.get_value(int(hint[1]), int(hint[2])+1)
                 if(int(hint[1])>0): top = state.board.get_value(int(hint[1])-1, int(hint[2]))
@@ -883,52 +852,6 @@ class Bimaru(Problem):
                 if(left not in ["l", "m", "?"] and right not in ["r", "m", "?"]):
                     if(bottom not in ("b", "m", "?") and top not in ("t", "m", "?")):
                         return False
-
-        """boats = [1,1,1,1,2,2,2,3,3,4]
-        for line in range(10):
-            for col in range(10):
-                value = state.board.representation[line, col]
-                if value == "C" or value == "c":
-                    if 1 in boats:
-                        boats.remove(1)
-                elif value == "T" or value == "t":
-                    tamanho = 0
-                    inc = 1
-                    while not(state.board.representation[line+inc, col] == "b"):
-                        if state.board.representation[line+inc, col] == "B":
-                            break
-                        if line + inc < 9:
-                            inc += 1
-                        else:
-                            return False
-                        tamanho += 1
-                    if tamanho + 2 not in boats:
-                        return False
-                    else:
-                        boats.remove(tamanho+2)
-                if value == "L" or value == "l":
-                    tamanho = 0
-                    inc = 1
-                    while not(state.board.representation[line, col+inc] == "R"):
-                        if state.board.representation[line, col+inc] == "r":
-                            break
-                        if col+inc < 9:
-                            inc += 1
-                        else:
-                            return False
-                        tamanho += 1
-                    if tamanho + 2 not in boats:
-                        return False
-                    else:
-                        boats.remove(tamanho+2)
-                if value == "R" or value == "r":
-                    if state.board.representation[line, col-1] not in ("M", "m", "L", "l"):
-                        return False
-                if value == "B" or value == "b":
-                    if state.board.representation[line-1, col] not in ("M", "m", "T", "t"):
-                        return False
-        if boats != []:
-            return False"""
         return True
 
     def h(self, node: Node):
@@ -940,25 +863,16 @@ class Bimaru(Problem):
 
 
 if __name__ == "__main__":
-    # TODO:
     # Ler o ficheiro do standard input,
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    #start = time.time()
+
     board = Board.parse_instance()
 
     problem = Bimaru(board)
     
-
-
-    goal_node = depth_first_tree_search(problem)
-    
+    goal_node = depth_first_tree_search(problem)   
 
     goal_node.state.board.print_solution()
-    #end = time.time()
-    #print(end-start)
-
-
-    
-    pass
+   
